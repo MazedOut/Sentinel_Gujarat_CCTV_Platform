@@ -1,0 +1,83 @@
+# =============================================================
+#  Sentinel Gujarat — .gitignore
+# =============================================================
+
+# ── Secrets & credentials ────────────────────────────────────
+.env
+*.key
+*.pem
+*.pfx
+*.p12
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Virtual environments ─────────────────────────────────────
+.venv/
+venv/
+env/
+.env.local
+
+# ── AI model weights (large binaries — track with Git LFS if needed) ──
+ai/models/*.pt
+ai/models/*.onnx
+ai/models/*.tflite
+ai/models/*.engine   # TensorRT compiled engines
+ai/models/*.torchscript
+
+# ── ANPR evidence frames ─────────────────────────────────────
+evidence/
+detection_samples/
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Database ─────────────────────────────────────────────────
+*.db
+*.sqlite3
+postgres_data/
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Node / Frontend tooling ──────────────────────────────────
+node_modules/
+frontend/.next/
+frontend/dist/
+frontend/.parcel-cache/
+
+# ── Docker volumes ───────────────────────────────────────────
+docker-volumes/
+
+# ── Alembic (keep versions, ignore auto-generated) ───────────
+# backend/alembic/versions/*.py   ← keep these tracked
+
+# ── Misc ─────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig

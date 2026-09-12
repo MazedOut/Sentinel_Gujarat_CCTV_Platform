@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel Gujarat — CCTV Intelligence Platform</title>
+  <meta name="description" content="AI-powered CCTV intelligence platform for Gujarat's law enforcement. Real-time vehicle detection, ANPR, watchlist matching, and route inference." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  LOGIN SCREEN                                                            -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div id="login-screen" class="login-screen">
+  <div class="login-bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="url(#g1)" stroke-width="2"/>
+          <circle cx="16" cy="16" r="6" fill="url(#g2)"/>
+          <path d="M16 2 L16 8 M16 24 L16 30 M2 16 L8 16 M24 16 L30 16" stroke="url(#g1)" stroke-width="1.5" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/>
+              <stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+            <linearGradient id="g2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#60a5fa"/>
+              <stop offset="1" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <div class="login-brand">SENTINEL</div>
+        <div class="login-sub">Gujarat CCTV Intelligence Platform</div>
+      </div>
+    </div>
+
+    <h2 class="login-title">Secure Access</h2>
+    <p class="login-desc">Sign in with your law enforcement credentials</p>
+    
+    <div id="login-error" class="login-error hidden"></div>
+    
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <div class="input-wrapper">
+          <i data-lucide="user" class="input-icon"></i>
+          <input type="text" id="login-username" placeholder="Enter username" autocomplete="username" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="input-wrapper">
+          <i data-lucide="lock" class="input-icon"></i>
+          <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+        <span>Sign In</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+    </form>
+    
+    <div class="login-hint">
+      <p>Demo credentials:</p>
+      <code>admin / sentinel_admin</code>
+      <code>officer1 / sentinel_officer</code>
+    </div>
+    
+    <div class="login-footer">
+      <span class="status-dot status-live"></span>
+      <span>System operational · 30 cameras online</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  MAIN DASHBOARD                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div id="app" class="app hidden">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon-sm">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="14" stroke="url(#gs1)" stroke-width="2"/>
+          <circle cx="16" cy="16" r="6" fill="url(#gs2)"/>
+          <defs>
+            <linearGradient id="gs1" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#3b82f6"/><stop offset="1" stop-color="#8b5cf6"/>
+            </linearGradient>
+            <linearGradient id="gs2" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#60a5fa"/><stop offset="1" stop-color="#a78bfa"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-name">SENTINEL</span>
+        <span class="logo-sub">Gujarat</span>
+      </div>
+    </div>
+    
+    <div class="sidebar-nav">
+      <button class="nav-item active" data-tab="overview" id="nav-overview">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Overview</span>
+      </button>
+      <button class="nav-item" data-tab="cameras" id="nav-cameras">
+        <i data-lucide="video"></i>
+        <span>Camera Grid</span>
+      </button>
+      <button class="nav-item" data-tab="alerts" id="nav-alerts">
+        <i data-lucide="bell-ring"></i>
+        <span>Alerts</span>
+        <span class="badge" id="alert-badge">0</span>
+      </button>
+      <button class="nav-item" data-tab="investigate" id="nav-investigate">
+        <i data-lucide="search"></i>
+        <span>Investigate</span>
+      </button>
+      <button class="nav-item" data-tab="map" id="nav-map">
+        <i data-lucide="map"></i>
+        <span>GIS Map</span>
+      </button>
+      <button class="nav-item" data-tab="watchlist" id="nav-watchlist">
+        <i data-lucide="shield-alert"></i>
+        <span>Watchlist</span>
+      </button>
+      <button class="nav-item" data-tab="audit" id="nav-audit">
+        <i data-lucide="file-text"></i>
+        <span>Audit Log</span>
+      </button>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="user-avatar">A</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Loading...</div>
+          <div class="user-role" id="user-role">--</div>
+        </div>
+        <button class="logout-btn" id="logout-btn" title="Logout">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title" id="topbar-title">Overview</div>
+        <div class="live-indicator">
+          <span class="status-dot status-live"></span>
+          <span>Live</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="time-display" id="time-display"></div>
+        <button class="btn btn-ghost btn-icon" id="sync-btn" title="Sync cameras">
+          <i data-lucide="refresh-cw"></i>
+        </button>
+        <div class="ws-indicator" id="ws-indicator" title="Alert stream">
+          <span class="status-dot status-warning"></span>
+          <span>Connecting...</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ─── TAB: OVERVIEW ─────────────────────────────────────────────── -->
+    <section id="tab-overview" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-blue">
+            <i data-lucide="video"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-cameras">--</div>
+            <div class="stat-label">Cameras Online</div>
+          </div>
+          <div class="stat-trend trend-up">
+            <i data-lucide="trending-up"></i>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-red">
+            <i data-lucide="bell-ring"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-alerts">0</div>
+            <div class="stat-label">Active Alerts</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-yellow">
+            <i data-lucide="car"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-detections">0</div>
+            <div class="stat-label">Detections Today</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon stat-purple">
+            <i data-lucide="shield-alert"></i>
+          </div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-watchlist">6</div>
+            <div class="stat-label">Watchlist Entries</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <!-- Recent alerts -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i data-lucide="bell-ring"></i> Recent Alerts</h3>
+            <button class="btn btn-ghost btn-sm" onclick="switchTab('alerts')">View All</button>
+          </div>
+          <div id="overview-alerts" class="alert-list">
+            <div class="empty-state">
+              <i data-lucide="check-circle"></i>
+              <p>No active alerts</p>
+              <small>System is monitoring live streams</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- System status -->
+        <div class="card">
+          <div class="card-header">
+            <h3><i data-lucide="activity"></i> System Status</h3>
+          </div>
+          <div class="status-list">
+            <div class="status-row">
+              <span>RTSP Ingestion</span>
+              <span class="badge badge-green">Active</span>
+            </div>
+            <div class="status-row">
+              <span>Vehicle Detection (YOLO)</span>
+              <span class="badge badge-blue" id="yolo-status">Ready</span>
+            </div>
+            <div class="status-row">
+              <span>ANPR / OCR</span>
+              <span class="badge badge-blue">PaddleOCR v3</span>
+            </div>
+            <div class="status-row">
+              <span>Watchlist</span>
+              <span class="badge badge-yellow">SYNTHETIC DEMO</span>
+            </div>
+            <div class="status-row">
+              <span>Database</span>
+              <span class="badge badge-green" id="db-status">Checking...</span>
+            </div>
+            <div class="status-row">
+              <span>Google Maps</span>
+              <span class="badge" id="maps-status">Checking...</span>
+            </div>
+            <div class="status-row">
+              <span>GPU (RTX 4060)</span>
+              <span class="badge badge-green">CUDA Active</span>
+            </div>
+          </div>
+          
+          <div class="sentinel-info">
+            <div class="info-row">
+              <span class="info-label">Sentinel RTSP</span>
+              <code>103.250.160.189:8554</code>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Cameras</span>
+              <code>cam01 – cam30 (provisional)</code>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Catalogue</span>
+              <code>cctv.corp8.cloud/cameras.json</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture note -->
+        <div class="card card-span">
+          <div class="card-header">
+            <h3><i data-lucide="layers"></i> Architecture: Intelligence Layer</h3>
+          </div>
+          <div class="arch-flow">
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8)">
+                <i data-lucide="video"></i>
+              </div>
+              <div class="arch-label">Sentinel CCTV<br><small>30 Live Cameras</small></div>
+            </div>
+            <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #7c3aed, #4c1d95)">
+                <i data-lucide="cpu"></i>
+              </div>
+              <div class="arch-label">RTSP Ingestion<br><small>TCP/H.264/H.265</small></div>
+            </div>
+            <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #059669, #065f46)">
+                <i data-lucide="scan-eye"></i>
+              </div>
+              <div class="arch-label">YOLOv8 Detection<br><small>RTX 4060 GPU</small></div>
+            </div>
+            <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #d97706, #92400e)">
+                <i data-lucide="tag"></i>
+              </div>
+              <div class="arch-label">ANPR / OCR<br><small>PaddleOCR v3</small></div>
+            </div>
+            <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #dc2626, #7f1d1d)">
+                <i data-lucide="shield-alert"></i>
+              </div>
+              <div class="arch-label">Watchlist Match<br><small>Configurable Confidence</small></div>
+            </div>
+            <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="arch-step">
+              <div class="arch-icon" style="background: linear-gradient(135deg, #0ea5e9, #0369a1)">
+                <i data-lucide="map-pin"></i>
+              </div>
+              <div class="arch-label">GIS & Routes<br><small>CONFIRMED vs INFERRED</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: CAMERAS ──────────────────────────────────────────────── -->
+    <section id="tab-cameras" class="tab-content">
+      <div class="cameras-toolbar">
+        <div class="search-box">
+          <i data-lucide="search"></i>
+          <input type="text" id="camera-search" placeholder="Search cameras..." />
+        </div>
+        <div class="filter-group">
+          <button class="btn btn-ghost btn-sm filter-active" data-filter="all" onclick="filterCameras('all', this)">All</button>
+          <button class="btn btn-ghost btn-sm" data-filter="live" onclick="filterCameras('live', this)">Live</button>
+          <button class="btn btn-ghost btn-sm" data-filter="quad" onclick="toggleQuadView(this)" id="quad-view-btn" title="View 4 live streams simultaneously">
+            <i data-lucide="layout-grid"></i> 4-Camera Live Grid
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-CAMERA LIVE GRID -->
+      <div id="quad-grid-container" class="quad-grid" style="display:none;margin-bottom:24px;">
+        <div class="quad-grid-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;background:var(--bg-card);padding:12px 16px;border-radius:var(--radius-md);border:1px solid var(--border);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="tv" style="color:var(--brand-blue)"></i>
+            <span style="font-weight:700;font-size:0.95rem;">Live Quad-Stream View (cam01 – cam04)</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="badge badge-green"><span class="status-dot status-live"></span> 4 Streams Active</span>
+            <button class="btn btn-ghost btn-sm" onclick="renderQuadGrid()"><i data-lucide="refresh-cw"></i> Reload</button>
+          </div>
+        </div>
+        <div class="quad-streams" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(360px, 1fr));gap:16px;"></div>
+      </div>
+
+      <div id="camera-grid" class="camera-grid">
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading cameras...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: ALERTS ───────────────────────────────────────────────── -->
+    <section id="tab-alerts" class="tab-content">
+      <div class="alerts-toolbar">
+        <div class="filter-pills">
+          <button class="pill pill-active" onclick="filterAlerts('all', this)">All</button>
+          <button class="pill pill-red" onclick="filterAlerts('HIGH', this)">HIGH</button>
+          <button class="pill pill-yellow" onclick="filterAlerts('MEDIUM', this)">MEDIUM</button>
+          <button class="pill pill-gray" onclick="filterAlerts('LOW', this)">LOW</button>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="loadAlerts()">
+          <i data-lucide="refresh-cw"></i> Refresh
+        </button>
+      </div>
+
+      <div id="alerts-container" class="alerts-container">
+        <div class="empty-state">
+          <i data-lucide="check-circle"></i>
+          <p>No alerts</p>
+          <small>The system is actively monitoring streams. Alerts appear when watchlist vehicles are detected.</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: INVESTIGATE ──────────────────────────────────────────── -->
+    <section id="tab-investigate" class="tab-content">
+      <div class="investigate-header">
+        <h2>Vehicle Investigation</h2>
+        <p>Search for a vehicle by registration plate to view its journey across camera network</p>
+      </div>
+      
+      <div class="investigate-search">
+        <div class="plate-search-box">
+          <div class="plate-prefix">GJ</div>
+          <input type="text" id="plate-input" placeholder="e.g. 01 AB 1234" class="plate-input" />
+          <button class="btn btn-primary" onclick="investigatePlate()" id="investigate-btn">
+            <i data-lucide="search"></i> Investigate
+          </button>
+        </div>
+        <div class="quick-plates">
+          <span>Quick demo:</span>
+          <button class="plate-chip" onclick="setPlate('GJ01AB1234')">GJ01AB1234</button>
+          <button class="plate-chip" onclick="setPlate('GJ05CD5678')">GJ05CD5678</button>
+          <button class="plate-chip" onclick="setPlate('GJ18EF9012')">GJ18EF9012</button>
+        </div>
+      </div>
+      
+      <div id="investigate-result" class="investigate-result hidden">
+        <div class="investigate-verdict" id="verdict-card">
+          <!-- Populated by JS -->
+        </div>
+        <div class="journey-timeline" id="journey-timeline">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div id="investigate-empty" class="investigate-empty">
+        <i data-lucide="search"></i>
+        <h3>Enter a plate to investigate</h3>
+        <p>The system will display all camera sightings, timestamps, and confidence scores.<br>
+        Routes between confirmed observations will be marked as <strong>INFERRED POSSIBLE ROUTE</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ─── TAB: GIS MAP ─────────────────────────────────────────────── -->
+    <section id="tab-map" class="tab-content">
+      <div class="map-toolbar">
+        <div class="map-legend">
+          <span class="legend-item"><span class="legend-dot legend-camera"></span>Camera</span>
+          <span class="legend-item"><span class="legend-dot legend-confirmed"></span>Confirmed Sighting</span>
+          <span class="legend-item"><span class="legend-line legend-inferred"></span>Inferred Route</span>
+        </div>
+        <div class="map-controls">
+          <input type="text" id="map-plate-search" placeholder="Plate to track..." class="input-sm" />
+          <button class="btn btn-sm btn-primary" onclick="trackOnMap()">Track</button>
+        </div>
+      </div>
+      
+      <div id="map-container" class="map-container">
+        <div id="gmap" class="gmap-placeholder">
+          <div class="map-placeholder-content">
+            <i data-lucide="map"></i>
+            <h3>Gujarat Camera Network</h3>
+            <p id="map-status-text">Initializing map...</p>
+            <div class="camera-dots-preview" id="camera-preview-dots">
+              <!-- Camera dots rendered here when no Google Maps API key -->
+            </div>
+            <div class="map-note">
+              <i data-lucide="info"></i>
+              <span>Google Maps API key required for full road routing. Set <code>GOOGLE_MAPS_API_KEY</code> in .env</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: WATCHLIST ────────────────────────────────────────────── -->
+    <section id="tab-watchlist" class="tab-content">
+      <div class="watchlist-header">
+        <div>
+          <h2>Watchlist</h2>
+          <div class="demo-badge">
+            <i data-lucide="alert-triangle"></i>
+            SYNTHETIC DEMO DATA — Not connected to VAHAN/SARTHI/eGujCop
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="showAddWatchlist()">
+          <i data-lucide="plus"></i> Add Entry
+        </button>
+      </div>
+
+      <div id="watchlist-add-form" class="watchlist-add-form hidden">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Registration Number</label>
+            <input type="text" id="wl-plate" placeholder="GJ01AB1234" />
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="wl-status">
+              <option>STOLEN</option>
+              <option>WANTED</option>
+              <option>MISSING</option>
+              <option selected>SURVEILLANCE</option>
+              <option>BLACKLISTED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Priority</label>
+            <select id="wl-priority">
+              <option value="HIGH">HIGH</option>
+              <option value="MEDIUM" selected>MEDIUM</option>
+              <option value="LOW">LOW</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Description</label>
+            <input type="text" id="wl-desc" placeholder="Reason for watchlist entry..." />
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="addWatchlistEntry()">Add</button>
+              <button class="btn btn-ghost" onclick="hideAddWatchlist()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="watchlist-table" class="watchlist-table">
+        <div class="loading-state"><div class="spinner"></div><p>Loading...</p></div>
+      </div>
+    </section>
+
+    <!-- ─── TAB: AUDIT ────────────────────────────────────────────────── -->
+    <section id="tab-audit" class="tab-content">
+      <div class="audit-header">
+        <h2>Audit Log</h2>
+        <p>All user actions are recorded for accountability and investigation</p>
+      </div>
+      <div id="audit-table" class="audit-table">
+        <div class="loading-state"><div class="spinner"></div><p>Loading...</p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ALERT DETAIL MODAL -->
+<div id="alert-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i data-lucide="bell-ring"></i> Alert Details</h3>
+      <button class="modal-close" onclick="closeModal('alert-modal')">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div id="alert-modal-body" class="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="acknowledgeCurrentAlert()" id="ack-btn">
+        <i data-lucide="check"></i> Acknowledge
+      </button>
+      <button class="btn btn-ghost" onclick="investigateFromAlert()" id="investigate-from-alert-btn">
+        <i data-lucide="search"></i> Investigate Vehicle
+      </button>
+      <button class="btn btn-ghost" onclick="closeModal('alert-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CAMERA DETAIL MODAL -->
+<div id="camera-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i data-lucide="video"></i> Camera Details</h3>
+      <button class="modal-close" onclick="closeModal('camera-modal')">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div id="camera-modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div id="toast-container" class="toast-container"></div>
+
+<script src="hls.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
