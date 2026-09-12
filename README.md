@@ -217,32 +217,49 @@ uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8000
 ## API Summary
 
 ```mermaid
-mindmap
-  root((Sentinel API))
-    Auth
-      POST /auth/login
-      POST /auth/register
-      GET /auth/me
-    Cameras
-      GET /cameras
-      GET /cameras/{id}
-      POST /cameras/sync
-      GET /api/hls/{cam}/index.m3u8
-    Alerts
-      GET /alerts
-      GET /alerts/{id}
-      POST /alerts/{id}/acknowledge
-      WS /ws/alerts
-    Vehicles
-      GET /vehicles
-      GET /vehicles/{plate}/history
-    Watchlist
-      GET /watchlist
-      POST /watchlist
-      DELETE /watchlist/{plate}
-    Intelligence
-      POST /routes/infer
-      GET /audit-logs
+flowchart LR
+    subgraph AUTH["🔐 Auth"]
+        A1["POST /auth/login"]
+        A2["POST /auth/register"]
+        A3["GET  /auth/me"]
+    end
+
+    subgraph CAMERAS["📷 Cameras"]
+        C1["GET  /cameras"]
+        C2["GET  /cameras/{id}"]
+        C3["POST /cameras/sync"]
+        C4["GET  /api/hls/{cam}/index.m3u8"]
+    end
+
+    subgraph ALERTS["🚨 Alerts"]
+        AL1["GET  /alerts"]
+        AL2["GET  /alerts/{id}"]
+        AL3["POST /alerts/{id}/acknowledge"]
+        AL4["WS   /ws/alerts"]
+    end
+
+    subgraph VEHICLES["🚗 Vehicles"]
+        V1["GET  /vehicles"]
+        V2["GET  /vehicles/{plate}/history"]
+    end
+
+    subgraph WATCHLIST["📋 Watchlist"]
+        W1["GET    /watchlist"]
+        W2["POST   /watchlist"]
+        W3["DELETE /watchlist/{plate}"]
+    end
+
+    subgraph INTEL["🗺️ Intelligence"]
+        I1["POST /routes/infer"]
+        I2["GET  /audit-logs"]
+    end
+
+    API(("Sentinel\nAPI\n:8000")) --> AUTH
+    API --> CAMERAS
+    API --> ALERTS
+    API --> VEHICLES
+    API --> WATCHLIST
+    API --> INTEL
 ```
 
 ---
