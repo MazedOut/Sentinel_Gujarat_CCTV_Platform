@@ -11,11 +11,10 @@ IMPORTANT:
   - These are clearly distinguished in the API and UI.
 """
 from sqlalchemy import Column, String, Integer, DateTime, Float, Boolean, Text, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 
-from backend.app.db.base import Base
+from backend.app.db.base import Base, JSONType
 
 
 class VehicleJourney(Base):

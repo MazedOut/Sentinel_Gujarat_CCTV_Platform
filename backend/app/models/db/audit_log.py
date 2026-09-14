@@ -2,10 +2,9 @@
 AuditLog DB model — immutable audit trail of all significant user actions.
 """
 from sqlalchemy import Column, String, Integer, DateTime, Text
-from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 
-from backend.app.db.base import Base
+from backend.app.db.base import Base, JSONType
 
 
 class AuditLog(Base):
@@ -35,7 +34,7 @@ class AuditLog(Base):
 
     # Detail
     description = Column(Text, nullable=True)
-    extra_data = Column(JSONB, nullable=True)  # was 'metadata' — reserved by SQLAlchemy
+    extra_data = Column(JSONType, nullable=True)  # was 'metadata' — reserved by SQLAlchemy
 
     # Result
     outcome = Column(String(20), nullable=True)  # SUCCESS | FAILURE | DENIED

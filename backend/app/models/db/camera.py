@@ -2,10 +2,9 @@
 Camera DB model — complete schema per Sentinel integration spec.
 """
 from sqlalchemy import Column, String, Float, Boolean, Integer, DateTime, Text
-from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 
-from backend.app.db.base import Base
+from backend.app.db.base import Base, JSONType
 
 
 class Camera(Base):
@@ -38,7 +37,7 @@ class Camera(Base):
     hls_url = Column(String(500), nullable=True)
 
     # Extra catalogue fields as JSON blob
-    extra_data = Column(JSONB, nullable=True, default=dict)
+    extra_data = Column(JSONType, nullable=True, default=dict)
 
     # Legacy fields (backward compat)
     name = Column(String(200), nullable=True)

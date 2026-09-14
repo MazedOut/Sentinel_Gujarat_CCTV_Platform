@@ -41,5 +41,7 @@ psycopg2-binary>=2.9.9
 geoalchemy2>=0.14.7
 alembic>=1.13.1
 
-# paddleocr paddlepaddle       <- ANPR OCR (Milestone 3)
 # passlib[bcrypt] python-jose  <- Auth/JWT (Milestone 5)
+# These are ALREADY USED in security.py — install them:
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.0.0

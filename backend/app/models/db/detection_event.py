@@ -2,10 +2,9 @@
 DetectionEvent DB model — persists each ANPR detection result.
 """
 from sqlalchemy import Column, String, Integer, DateTime, Float, Boolean, Text
-from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 
-from backend.app.db.base import Base
+from backend.app.db.base import Base, JSONType
 
 
 class DetectionEvent(Base):
@@ -31,7 +30,7 @@ class DetectionEvent(Base):
     # Vehicle detection
     vehicle_class = Column(String(20), nullable=True)  # car|bus|truck|motorcycle
     vehicle_confidence = Column(Float, nullable=True)
-    vehicle_bbox = Column(JSONB, nullable=True)         # {x1,y1,x2,y2}
+    vehicle_bbox = Column(JSONType, nullable=True)         # {x1,y1,x2,y2}
 
     # ANPR
     raw_plate_text = Column(String(50), nullable=True)
@@ -39,7 +38,7 @@ class DetectionEvent(Base):
     plate_detection_confidence = Column(Float, nullable=True)
     ocr_confidence = Column(Float, nullable=True)
     is_valid_plate_format = Column(Boolean, nullable=True)
-    plate_bbox = Column(JSONB, nullable=True)
+    plate_bbox = Column(JSONType, nullable=True)
 
     # Composite confidence score
     overall_confidence = Column(Float, nullable=True)
