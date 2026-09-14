@@ -14,7 +14,7 @@ class Alert(Base):
 
     # Identity
     camera_id = Column(String(50), index=True, nullable=False)
-    registration_number = Column(String(20), index=True, nullable=False)
+    registration_number = Column(String(100), index=True, nullable=False)
     timestamp = Column(DateTime(timezone=True), nullable=False)  # wall-clock event time
 
     # Location at time of detection
@@ -29,7 +29,7 @@ class Alert(Base):
     overall_confidence = Column(Float, nullable=False)
 
     # Watchlist match
-    watchlist_status = Column(String(30), nullable=False)   # STOLEN | WANTED | MISSING etc
+    watchlist_status = Column(String(60), nullable=False)   # STOLEN | WANTED | MISSING | ACCIDENT_COLLISION etc
     priority = Column(String(10), nullable=False)           # HIGH | MEDIUM | LOW
     watchlist_source = Column(String(50), nullable=True)
 
@@ -50,9 +50,9 @@ class Alert(Base):
     notes = Column(Text, nullable=True)
 
     # Backward compat
-    plate_number = Column(String(20), nullable=True)  # alias for registration_number
+    plate_number = Column(String(100), nullable=True)  # alias for registration_number
     confidence = Column(Float, nullable=True)          # alias for overall_confidence
-    risk_category = Column(String(30), nullable=True)  # alias for watchlist_status
+    risk_category = Column(String(60), nullable=True)  # alias for watchlist_status
     frame_path = Column(String(500), nullable=True)    # alias for evidence_frame_path
 
     created_at = Column(
