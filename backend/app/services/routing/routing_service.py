@@ -250,6 +250,66 @@ class GoogleMapsRoutingService(RoutingService):
 
 
 # ---------------------------------------------------------------------------
+# OSRM (Open Source Routing Machine) road routing provider
+# ---------------------------------------------------------------------------
+
+class OSRMRoutingService(RoutingService):
+    """
+    Uses Open Source Routing Machine (OSRM) driving API for real road corridors.
+    Standard open routing provider for OpenStreetMap / Leaflet applications.
+    Does not require a commercial API key.
+    Falls back gracefully to FallbackRoutingService on timeout or failure.
+    """
+
+    def infer_route(
+        self,
+        origin_lat: float,
+        origin_lon: float,
+        dest_lat: float,
+        dest_lon: float,
+        origin_camera: str = "",
+        dest_camera: str = "",
+    ) -> RouteResult:
+        try:
+            import httpx
+            import json
+            # OSRM expects coordinates in {longitude},{latitude} format
+            url = f"https://router.project-osrm.org/route/v1/driving/{origin_lon},{origin_lat};{dest_lon},{dest_lat}?overview=full&geometries=geojson"
+            with httpx.Client(timeout=4.0) as client:
+                resp = client.get(url)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if data.get("code") == "Ok" and data.get("routes"):
+                        route = data["routes"][0]
+                        dist_m = float(route.get("distance", 0.0))
+                        dur_s = float(route.get("duration", 0.0))
+                        geom = route.get("geometry")
+                        geom_str = json.dumps(geom) if isinstance(geom, dict) else str(geom)
+
+                        return RouteResult(
+                            origin_camera=origin_camera,
+                            dest_camera=dest_camera,
+                            origin_lat=origin_lat,
+                            origin_lon=origin_lon,
+                            dest_lat=dest_lat,
+                            dest_lon=dest_lon,
+                            distance_m=dist_m,
+                            duration_s=dur_s,
+                            geometry=geom_str,
+                            provider="osrm_road_routing",
+                            route_type="INFERRED_POSSIBLE_ROUTE",
+                            alternatives=[],
+                        )
+        except Exception as exc:
+            logger.warning("OSRM road routing unavailable or timed out: %s. Falling back to straight-line.", exc)
+
+        return FallbackRoutingService().infer_route(
+            origin_lat, origin_lon, dest_lat, dest_lon,
+            origin_camera, dest_camera,
+        )
+
+
+# ---------------------------------------------------------------------------
 # Factory
 # ---------------------------------------------------------------------------
 
@@ -267,11 +327,8 @@ def get_routing_service() -> RoutingService:
         _routing_service = GoogleMapsRoutingService(settings.google_maps_api_key)
         logger.info("Routing: Google Maps provider active.")
     else:
-        _routing_service = FallbackRoutingService()
-        logger.info(
-            "Routing: Using straight-line fallback "
-            "(set GOOGLE_MAPS_API_KEY in .env to enable road routing)."
-        )
+        _routing_service = OSRMRoutingService()
+        logger.info("Routing: OpenStreetMap / OSRM road routing active with Haversine fallback.")
     return _routing_service
 
 

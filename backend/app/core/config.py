@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     """
 
     # Database
+    database_url: Optional[str] = None
     postgres_user: str = "sentinel"
     postgres_password: str = "sentinelpassword"
     postgres_host: str = "localhost"
@@ -38,9 +39,16 @@ class Settings(BaseSettings):
     postgres_db: str = "sentinel_registry"
 
     @property
-    def database_url(self) -> str:
-        """Constructs the SQLAlchemy database URL."""
+    def construct_postgres_url(self) -> str:
+        """Constructs the SQLAlchemy database URL from individual postgres_* parts."""
         return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+
+    @property
+    def effective_database_url(self) -> str:
+        """Returns database_url if set, otherwise constructed PostgreSQL URL."""
+        if self.database_url and self.database_url.strip():
+            return self.database_url.strip()
+        return self.construct_postgres_url
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -184,8 +192,7 @@ class Settings(BaseSettings):
         """PostgreSQL connection string. Uses DATABASE_URL env var if set, else constructs from parts."""
         if self.database_url:
             return self.database_url
-        return f"postgresql://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
-
+        return self.construct_postgres_url
     # ------------------------------------------------------------------
     # AI / Detection
     # ------------------------------------------------------------------

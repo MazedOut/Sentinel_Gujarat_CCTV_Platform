@@ -129,10 +129,91 @@ class JourneyCorrelator:
 
     def get_journey(self, plate: str) -> Optional[dict]:
         """Get the complete journey for a plate."""
-        return _journeys.get(plate.upper().strip())
+        norm = plate.upper().strip()
+        journey = _journeys.get(norm)
+        if journey and journey.get("segments"):
+            return journey
+
+        # Check DB if available
+        db = self.db
+        if not db:
+            from backend.app.db.session import SessionLocal
+            if SessionLocal:
+                try:
+                    db = SessionLocal()
+                except Exception:
+                    db = None
+
+        if db:
+            try:
+                from backend.app.models.db.vehicle_journey import VehicleJourney, JourneySegment
+                db_j = db.query(VehicleJourney).filter(VehicleJourney.normalised_plate == norm).first()
+                if db_j:
+                    db_segs = (
+                        db.query(JourneySegment)
+                        .filter(JourneySegment.journey_id == db_j.id)
+                        .order_by(JourneySegment.event_time.asc())
+                        .all()
+                    )
+                    segs = []
+                    cams = set()
+                    for s in db_segs:
+                        cams.add(s.camera_id)
+                        segs.append({
+                            "id": str(s.id),
+                            "journey_plate": norm,
+                            "camera_id": s.camera_id,
+                            "event_time": s.event_time.isoformat() if s.event_time else "",
+                            "pts_ms": s.pts_ms,
+                            "location": s.location,
+                            "latitude": s.latitude,
+                            "longitude": s.longitude,
+                            "overall_confidence": s.overall_confidence,
+                            "observation_type": s.observation_type or "CONFIRMED_OBSERVATION",
+                            "inferred_route": s.inferred_route_geometry,
+                        })
+                    res = {
+                        "id": str(db_j.id),
+                        "normalised_plate": norm,
+                        "first_seen": db_j.first_seen.isoformat() if db_j.first_seen else (segs[0]["event_time"] if segs else None),
+                        "last_seen": db_j.last_seen.isoformat() if db_j.last_seen else (segs[-1]["event_time"] if segs else None),
+                        "sighting_count": db_j.sighting_count or len(segs),
+                        "camera_count": db_j.camera_count or len(cams),
+                        "cameras_seen": list(cams),
+                        "segments": segs,
+                        "watchlist_matched": bool(db_j.watchlist_matched),
+                        "watchlist_status": db_j.watchlist_status,
+                        "created_at": db_j.created_at.isoformat() if db_j.created_at else datetime.now(timezone.utc).isoformat(),
+                    }
+                    _journeys[norm] = res
+                    return res
+            except Exception as exc:
+                logger.error("Failed to query journey from DB: %s", exc)
+
+        return journey
 
     def get_all_journeys(self, limit: int = 100) -> list[dict]:
         """Get all vehicle journeys, most recent first."""
+        # Query DB if available to synchronize
+        db = self.db
+        if not db:
+            from backend.app.db.session import SessionLocal
+            if SessionLocal:
+                try:
+                    db = SessionLocal()
+                except Exception:
+                    db = None
+
+        if db:
+            try:
+                from backend.app.models.db.vehicle_journey import VehicleJourney
+                db_journeys = db.query(VehicleJourney).order_by(VehicleJourney.last_seen.desc()).limit(limit).all()
+                for dj in db_journeys:
+                    if dj.normalised_plate not in _journeys:
+                        self.get_journey(dj.normalised_plate)
+            except Exception as exc:
+                logger.debug("DB sync for all journeys failed: %s", exc)
+
         journeys = list(_journeys.values())
         journeys.sort(key=lambda j: j.get("last_seen", ""), reverse=True)
         return journeys[:limit]
@@ -238,12 +319,86 @@ class JourneyCorrelator:
                 pass
 
 
-# Singleton correlator (no DB)
+def _seed_demo_data(correlator: JourneyCorrelator) -> None:
+    """Seed representative demo vehicle journeys matching synthetic watchlist entries."""
+    now = datetime.now(timezone.utc)
+    
+    # 1. GJ01AB1234 — Stolen Vehicle Journey across Ahmedabad corridor
+    p1 = "GJ01AB1234"
+    if p1 not in _journeys:
+        t1 = now - timedelta(minutes=32)
+        t2 = now - timedelta(minutes=18)
+        t3 = now - timedelta(minutes=5)
+        correlator.add_sighting(
+            plate=p1,
+            camera_id="cam01",
+            event_time=t1,
+            location="Ahmedabad — SG Highway & Prahlad Nagar Junction",
+            latitude=23.0135,
+            longitude=72.5082,
+            overall_confidence=0.95,
+        )
+        correlator.add_sighting(
+            plate=p1,
+            camera_id="cam02",
+            event_time=t2,
+            location="Ahmedabad — CTM Expressway Toll / NH48 Junction",
+            latitude=22.9876,
+            longitude=72.6321,
+            overall_confidence=0.92,
+        )
+        correlator.add_sighting(
+            plate=p1,
+            camera_id="cam03",
+            event_time=t3,
+            location="Ahmedabad — Narol Industrial Circle & Ring Road",
+            latitude=22.9712,
+            longitude=72.5984,
+            overall_confidence=0.94,
+        )
+
+    # 2. GJ05CD5678 — Wanted Vehicle in South Gujarat corridor
+    p2 = "GJ05CD5678"
+    if p2 not in _journeys:
+        t4 = now - timedelta(minutes=45)
+        t5 = now - timedelta(minutes=12)
+        correlator.add_sighting(
+            plate=p2,
+            camera_id="cam25",
+            event_time=t4,
+            location="Navsari — National Highway 48 Junction",
+            latitude=20.9467,
+            longitude=72.9281,
+            overall_confidence=0.91,
+        )
+        correlator.add_sighting(
+            plate=p2,
+            camera_id="cam26",
+            event_time=t5,
+            location="Bilimora — Somnath Temple Circle",
+            latitude=20.7612,
+            longitude=72.9684,
+            overall_confidence=0.93,
+        )
+
+
+# Singleton correlator
 _correlator = JourneyCorrelator()
+try:
+    _seed_demo_data(_correlator)
+except Exception as e:
+    logger.debug("Demo journey seeding skipped: %s", e)
 
 
 def get_correlator(db_session=None) -> JourneyCorrelator:
     """Get a correlator instance."""
     if db_session:
         return JourneyCorrelator(db_session=db_session)
+    from backend.app.db.session import SessionLocal
+    if SessionLocal:
+        try:
+            return JourneyCorrelator(db_session=SessionLocal())
+        except Exception:
+            pass
     return _correlator
+

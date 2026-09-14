@@ -26,6 +26,10 @@ logger = get_logger(__name__)
 _alert_store: dict[str, dict] = {}
 _alert_callbacks: list = []  # WebSocket broadcast callbacks
 
+# Cooldown cache to prevent spamming identical alerts: (plate, camera_id) -> last_alert_datetime
+_recent_alerts: dict[tuple[str, str], datetime] = {}
+_ALERT_COOLDOWN_SECONDS = 60
+
 
 def register_alert_callback(callback) -> None:
     """Register a callback to be called when a new alert is generated."""
@@ -107,6 +111,20 @@ class AlertEngine:
         if watchlist_entry is None:
             return None
 
+        # Cooldown deduplication: Avoid duplicate alerts for same vehicle lingering at same camera
+        now = datetime.now(timezone.utc)
+        cache_key = (plate, anpr_result.camera_id)
+        last_time = _recent_alerts.get(cache_key)
+        if last_time and (now - last_time).total_seconds() < _ALERT_COOLDOWN_SECONDS:
+            logger.debug(
+                "[%s] Alert deduplicated for %s (last alerted %ds ago, cooldown=%ds)",
+                anpr_result.camera_id,
+                plate,
+                int((now - last_time).total_seconds()),
+                _ALERT_COOLDOWN_SECONDS,
+            )
+            return None
+
         # We have a watchlist match — determine severity
         severity = _determine_severity(anpr_result.final_confidence)
 
@@ -130,6 +148,7 @@ class AlertEngine:
 
         # Persist
         self._persist_alert(alert)
+        _recent_alerts[cache_key] = now
 
         logger.warning(
             "[ALERT] %s severity | cam=%s | plate=%s | conf=%.2f | status=%s",
@@ -173,7 +192,8 @@ class AlertEngine:
                 self.db.add(db_alert)
                 self.db.commit()
                 self.db.refresh(db_alert)
-                alert["id"] = db_alert.id
+                alert["id"] = str(db_alert.id)
+                _alert_store[alert["id"]] = alert
             except Exception as exc:
                 logger.error("Failed to persist alert to DB: %s", exc)
                 _alert_store[alert["id"]] = alert
@@ -182,14 +202,41 @@ class AlertEngine:
 
 
 def get_all_alerts(limit: int = 100) -> list[dict]:
-    """Get recent alerts from in-memory store (used when DB unavailable)."""
+    """Get recent alerts from in-memory store and database."""
+    try:
+        from backend.app.db.session import SessionLocal
+        if SessionLocal:
+            with SessionLocal() as db:
+                from backend.app.models.db.alert import Alert as DBAlert
+                db_alerts = db.query(DBAlert).order_by(DBAlert.timestamp.desc()).limit(limit).all()
+                for dba in db_alerts:
+                    aid = str(dba.id)
+                    if aid not in _alert_store:
+                        _alert_store[aid] = dba.to_dict()
+    except Exception:
+        pass
+
     alerts = list(_alert_store.values())
     alerts.sort(key=lambda a: a.get("timestamp", ""), reverse=True)
     return alerts[:limit]
 
 
 def get_alert(alert_id: str) -> Optional[dict]:
-    return _alert_store.get(alert_id)
+    if alert_id in _alert_store:
+        return _alert_store[alert_id]
+    try:
+        from backend.app.db.session import SessionLocal
+        if SessionLocal:
+            with SessionLocal() as db:
+                from backend.app.models.db.alert import Alert as DBAlert
+                dba = db.query(DBAlert).filter(DBAlert.id == alert_id).first()
+                if dba:
+                    d = dba.to_dict()
+                    _alert_store[alert_id] = d
+                    return d
+    except Exception:
+        pass
+    return None
 
 
 def acknowledge_alert(alert_id: str, username: str) -> bool:

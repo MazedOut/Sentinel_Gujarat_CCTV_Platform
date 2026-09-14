@@ -2,10 +2,9 @@
 Alert DB model — generated when watchlist match exceeds confidence threshold.
 """
 from sqlalchemy import Column, String, Integer, DateTime, Float, Text, Boolean
-from sqlalchemy.dialects.postgresql import JSONB
 from datetime import datetime, timezone
 
-from backend.app.db.base import Base
+from backend.app.db.base import Base, JSONType
 
 
 class Alert(Base):
@@ -40,8 +39,8 @@ class Alert(Base):
     # Evidence
     pts_ms = Column(Float, nullable=True)         # stream PTS at detection
     frame_index = Column(Integer, nullable=True)
-    bbox_json = Column(JSONB, nullable=True)       # bounding box of vehicle
-    plate_bbox_json = Column(JSONB, nullable=True) # bounding box of plate
+    bbox_json = Column(JSONType, nullable=True)       # bounding box of vehicle
+    plate_bbox_json = Column(JSONType, nullable=True) # bounding box of plate
     evidence_frame_path = Column(String(500), nullable=True)  # saved frame path if any
 
     # Alert lifecycle

@@ -160,12 +160,14 @@ class StreamManager:
         self,
         camera_id: str,
         rtsp_url: str,
+        hls_url: Optional[str] = None,
         rtsp_transport: Optional[str] = None,
         frame_timeout_sec: Optional[int] = None,
         max_reconnects: Optional[int] = None,  # None = retry forever
     ):
         self.camera_id = camera_id
         self.rtsp_url = rtsp_url
+        self.hls_url = hls_url or (settings.hls_url_for(camera_id) if hasattr(settings, "hls_url_for") else None)
         self.rtsp_transport = rtsp_transport or settings.rtsp_transport
         self.frame_timeout_sec = frame_timeout_sec or settings.rtsp_frame_timeout_sec
         self.max_reconnects = max_reconnects
@@ -293,9 +295,8 @@ class StreamManager:
         Sentinel integration rule:
             "Every RTSP client must force TCP.
              Do NOT rely on UDP — UDP packet loss causes corrupted frames
-             that look like AI/model failures."
-
-        We set OPENCV_FFMPEG_CAPTURE_OPTIONS to enforce tcp transport.
+             that look like AI/model failures.
+             If 8554 is blocked, use the HLS endpoint."
         """
         self.info.state = StreamState.CONNECTING
         logger.info(
@@ -305,36 +306,21 @@ class StreamManager:
             redact_credentials(self.rtsp_url),
         )
 
-        # OPENCV_FFMPEG_CAPTURE_OPTIONS is the correct way to pass FFmpeg options
-        # to cv2.VideoCapture.  The format is "key;value|key;value".
-        # We MUST set rtsp_transport to tcp.
-        cap = cv2.VideoCapture(
-            self.rtsp_url,
-            cv2.CAP_FFMPEG,
-        )
-
-        # Force TCP transport via FFmpeg options
-        cap.set(
-            cv2.CAP_PROP_FOURCC,
-            cv2.VideoWriter.fourcc(*"H264"),  # hint; actual codec determined from stream
-        )
-
-        # The recommended way to force TCP with OpenCV + FFmpeg backend:
-        # We pass the option string before opening in newer OpenCV versions.
-        # For robustness, re-open with the options dict approach if available.
-        cap.release()
-
-        # Build the RTSP URL with TCP transport as a query parameter
-        # This is the most reliable cross-platform approach with OpenCV 4.x
-        rtsp_url_tcp = self.rtsp_url
-        if "?" not in self.rtsp_url:
-            rtsp_url_tcp = f"{self.rtsp_url}?rtsp_transport=tcp"
-
-        # Open with FFMPEG backend and TCP option via environment approach
         import os
+        # Force TCP transport per Sentinel Integrator's Guide §2 & §3
         os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = f"rtsp_transport;{self.rtsp_transport}"
 
-        cap = cv2.VideoCapture(rtsp_url_tcp, cv2.CAP_FFMPEG)
+        cap = cv2.VideoCapture(self.rtsp_url, cv2.CAP_FFMPEG)
+
+        # Fallback to HLS if port 8554 is blocked per Integrator's Guide §3
+        if not cap.isOpened() and self.hls_url:
+            logger.info(
+                "[%s] Direct RTSP stream connection failed (port 8554 may be blocked). "
+                "Attempting HLS endpoint fallback per Integrator's Guide: %s",
+                self.camera_id,
+                redact_credentials(self.hls_url),
+            )
+            cap = cv2.VideoCapture(self.hls_url, cv2.CAP_FFMPEG)
 
         if not cap.isOpened():
             logger.warning(
