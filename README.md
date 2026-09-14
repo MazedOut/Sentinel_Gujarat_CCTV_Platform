@@ -35,6 +35,7 @@
 12. [Role-Based Access Control (RBAC) & Audit Integrity](#role-based-access-control-rbac--audit-integrity)
 13. [Hardware Acceleration & Production Deployment](#hardware-acceleration--production-deployment)
 14. [Quickstart Setup & Jury Evaluation Guide](#quickstart-setup--jury-evaluation-guide)
+15. [Detailed Documentation Archive](#detailed-documentation-archive)
 
 ---
 
@@ -461,6 +462,22 @@ http://localhost:8000/ui/
 4. **Video & Operational Analytics**: Navigate to the Analytics tab. Toggle between **Today**, **24h**, **7d**, and **30d** filters. Inspect the 8 KPI metric cards, Chart.js detection graphs, the live ANPR detection log, and click **Export Report (CSV)**.
 5. **Tactical Alerts & Incident AID**: View the pre-seeded high-impact accident collisions, stolen vehicle intercepts, and wrong-way driving incidents. Test the one-click **Dispatch 108 Ambulance** or **Dispatch PCR Patrol** buttons.
 6. **Vehicle Investigation**: Search for target plate `GJ01AB1234` to view the chronological multi-camera timeline and reconstructed road corridor on the GIS map.
+
+---
+
+## 📚 Detailed Documentation Archive
+
+For in-depth technical specifications and deep-dives, please refer to the `docs/` directory:
+
+- [Tech Stack & Technologies Used](docs/tech_stack.md) - Comprehensive list of all frameworks, libraries, and tools.
+- [Architecture Deep Dive](docs/architecture_deep_dive.md) - High-level system architecture and component interactions.
+- [AI Pipeline & Inference Workflow](docs/ai_pipeline.md) - YOLO vehicle detection, ByteTrack, and PaddleOCR pipeline.
+- [API Reference](docs/api_reference.md) - REST API endpoints and WebSocket channels.
+- [Database Schema & Data Persistence](docs/database_schema.md) - Entity-Relationship diagram and PostGIS overview.
+- [Security, RBAC & The HLS Proxy](docs/security_and_rbac.md) - Chain-of-custody audit logs and zero-leakage streaming.
+- [Deployment & Production Setup](docs/deployment_guide.md) - Docker Compose, Gunicorn, and Nginx configurations.
+- [Troubleshooting & Diagnostics](docs/troubleshooting.md) - Common issues and resolutions for RTSP and hardware acceleration.
+- [MCP Context Handoff](docs/context_handoff.md) - Complete developer onboarding guide.
 
 ---
 
