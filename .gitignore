@@ -89,3 +89,4 @@ docker-volumes/
 *.bak
 *.tmp
 *.orig
+.vercel
