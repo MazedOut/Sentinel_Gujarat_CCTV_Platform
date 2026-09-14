@@ -31,8 +31,9 @@
 7. [Core Capabilities & Features](#-core-capabilities--features)
 8. [API Reference & Real-Time WebSocket Interface](#-api-reference--real-time-websocket-interface)
 9. [Role-Based Access Control (RBAC) & Audit Integrity](#-role-based-access-control-rbac--audit-integrity)
-10. [Hardware Acceleration & Production Deployment](#-hardware-acceleration--production-deployment)
-11. [Quickstart Setup Guide](#-quickstart-setup-guide)
+34. [Hardware Acceleration & Production Deployment](#-hardware-acceleration--production-deployment)
+35. [Quickstart Setup Guide](#-quickstart-setup-guide)
+36. [Detailed Documentation Archive](#-detailed-documentation-archive)
 
 ---
 
@@ -395,6 +396,21 @@ To launch real-time AI vehicle detection and ANPR for any camera:
 ```bash
 python scripts/start_stream.py cam01
 ```
+
+---
+
+## 📚 Detailed Documentation Archive
+
+For in-depth technical specifications and deep-dives, please refer to the `docs/` directory:
+
+- [Architecture Deep Dive](docs/architecture_deep_dive.md) - High-level system architecture and component interactions.
+- [AI Pipeline & Inference Workflow](docs/ai_pipeline.md) - YOLO vehicle detection, ByteTrack, and PaddleOCR pipeline.
+- [API Reference](docs/api_reference.md) - REST API endpoints and WebSocket channels.
+- [Database Schema & Data Persistence](docs/database_schema.md) - Entity-Relationship diagram and PostGIS overview.
+- [Security, RBAC & The HLS Proxy](docs/security_and_rbac.md) - Chain-of-custody audit logs and zero-leakage streaming.
+- [Deployment & Production Setup](docs/deployment_guide.md) - Docker Compose, Gunicorn, and Nginx configurations.
+- [Troubleshooting & Diagnostics](docs/troubleshooting.md) - Common issues and resolutions for RTSP and hardware acceleration.
+- [MCP Context Handoff](docs/context_handoff.md) - Complete developer onboarding guide.
 
 ---
 
