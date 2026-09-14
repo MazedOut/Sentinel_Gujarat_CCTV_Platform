@@ -2,10 +2,19 @@
  * Drishti — Police CCTV Intelligence & Surveillance Frontend Logic
  */
 
-// API_BASE always points to the FastAPI backend (port 8000).
-// When the frontend is served separately (e.g. python -m http.server 3000),
-// window.location.origin would be :3000, so we explicitly target :8000.
-const API_BASE = `${window.location.protocol}//${window.location.hostname}:8000`;
+// API_BASE configuration:
+// Automatically detects Vercel / production origins while maintaining local dev compatibility.
+const API_BASE = (function() {
+  if (window.DRISHTI_API_BASE) return window.DRISHTI_API_BASE;
+  const stored = localStorage.getItem("drishti_api_base");
+  if (stored) return stored;
+  // If running locally on localhost/127.0.0.1 on a port other than 8000 (e.g. 3000, 5500)
+  if ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && window.location.port && window.location.port !== "8000") {
+    return `${window.location.protocol}//${window.location.hostname}:8000`;
+  }
+  // If running on Vercel, cloud domain, or served directly from FastAPI at :8000
+  return window.location.origin;
+})();
 let ws = null;
 let token = localStorage.getItem("drishti_token") || localStorage.getItem("sentinel_token");
 let currentUser = null;
