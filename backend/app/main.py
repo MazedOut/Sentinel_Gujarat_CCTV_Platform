@@ -463,7 +463,12 @@ class AcknowledgeRequest(BaseModel):
 # ---------------------------------------------------------------------------
 
 @app.get("/", tags=["health"])
-def root():
+def root(request: Request):
+    accept = request.headers.get("accept", "")
+    index_file = os.path.join(_frontend_dir, "index.html")
+    if "text/html" in accept and os.path.isfile(index_file):
+        from fastapi.responses import FileResponse
+        return FileResponse(index_file)
     return {
         "service": "Drishti CCTV Intelligence Platform",
         "version": "1.0.0-poc",
@@ -477,6 +482,7 @@ def root():
 @app.get("/app", include_in_schema=False)
 def dashboard_redirect():
     return RedirectResponse("/ui/")
+
 
 
 @app.get("/health", tags=["health"])
@@ -1566,7 +1572,22 @@ def get_detection_by_id(
 
 _frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
 if os.path.isdir(_frontend_dir):
+    from fastapi.responses import FileResponse
+
+    @app.get("/app.js", include_in_schema=False)
+    def _serve_app_js():
+        return FileResponse(os.path.join(_frontend_dir, "app.js"))
+
+    @app.get("/style.css", include_in_schema=False)
+    def _serve_style_css():
+        return FileResponse(os.path.join(_frontend_dir, "style.css"))
+
+    @app.get("/hls.min.js", include_in_schema=False)
+    def _serve_hls_min_js():
+        return FileResponse(os.path.join(_frontend_dir, "hls.min.js"))
+
     app.mount("/ui", StaticFiles(directory=_frontend_dir, html=True), name="frontend")
+
 
 
 # ---------------------------------------------------------------------------
