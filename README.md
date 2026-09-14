@@ -403,6 +403,7 @@ python scripts/start_stream.py cam01
 
 For in-depth technical specifications and deep-dives, please refer to the `docs/` directory:
 
+- [Tech Stack & Technologies Used](docs/tech_stack.md) - Comprehensive list of all frameworks, libraries, and tools.
 - [Architecture Deep Dive](docs/architecture_deep_dive.md) - High-level system architecture and component interactions.
 - [AI Pipeline & Inference Workflow](docs/ai_pipeline.md) - YOLO vehicle detection, ByteTrack, and PaddleOCR pipeline.
 - [API Reference](docs/api_reference.md) - REST API endpoints and WebSocket channels.
