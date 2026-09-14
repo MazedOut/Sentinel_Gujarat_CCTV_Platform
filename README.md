@@ -1,4 +1,4 @@
-# Sentinel Gujarat — Police CCTV Intelligence & Surveillance Operating Environment
+# Drishti (दृष्टि) — AI CCTV Intelligence & Tactical Surveillance Operating Environment
 
 <div align="center">
 
@@ -12,95 +12,115 @@
 [![PaddleOCR](https://img.shields.io/badge/PaddleOCR-High%20Accuracy%20ANPR-007ACC?style=for-the-badge)](https://github.com/PaddlePaddle/PaddleOCR)
 [![HLS.js](https://img.shields.io/badge/HLS.js-AES--128%20Zero--Latency-E50914?style=for-the-badge)](https://github.com/video-dev/hls.js)
 [![Leaflet GIS](https://img.shields.io/badge/GIS%20Mapping-OpenStreetMap%20%2B%20OSRM-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com)
-[![License](https://img.shields.io/badge/Classification-Gujarat%20Police%20Restricted-red?style=for-the-badge)](#)
-
+[![Classification](https://img.shields.io/badge/Classification-Gujarat%20Police%20Restricted-red?style=for-the-badge)](#)
 </div>
 
 ---
 
-## 📑 Table of Contents
-1. [Executive Overview: What is Sentinel Gujarat?](#-executive-overview-what-is-sentinel-gujarat)
-2. [Operational Mission: Who is this for & Why is it built?](#-operational-mission-who-is-this-for--why-is-it-built)
-3. [Competitive Advantage: Why Sentinel Gujarat Outperforms Other Systems](#-competitive-advantage-why-sentinel-gujarat-outperforms-other-systems)
-4. [End-to-End System Architecture](#-end-to-end-system-architecture)
-5. [AI Implementation & Inference Workflow Flowcharts](#-ai-implementation--inference-workflow-flowcharts)
+## Table of Contents
+1. [Executive Overview: What is Drishti?](#executive-overview-what-is-drishti)
+2. [Brand Identity & Visual Engineering: The Drishti Vector Emblem](#brand-identity--visual-engineering-the-drishti-vector-emblem)
+3. [Operational Mission: Who is this for & Why is it built?](#operational-mission-who-is-this-for--why-is-it-built)
+4. [Competitive Advantage: Why Drishti Outperforms Conventional VMS](#competitive-advantage-why-drishti-outperforms-conventional-vms)
+5. [End-to-End System Architecture](#end-to-end-system-architecture)
+6. [Video & Operational Analytics Dashboard](#video--operational-analytics-dashboard)
+7. [Automated Incident Detection (AID) & Emergency Dispatch](#automated-incident-detection-aid--emergency-dispatch)
+8. [Deterministic 30-Node CCTV Surveillance Wall](#deterministic-30-node-cctv-surveillance-wall)
+9. [AI Implementation & Inference Workflow](#ai-implementation--inference-workflow)
    - [AI Pipeline Sequence Architecture](#1-ai-pipeline-sequence-architecture)
-   - [Automated Incident Detection & Emergency Dispatch Flow](#2-automated-incident-detection--emergency-dispatch-flow)
+   - [Automated Crash Kinematics & 108 EMS Dispatch Flow](#2-automated-crash-kinematics--108-ems-dispatch-flow)
    - [Multi-Camera Vehicle Journey Correlation & Road Routing](#3-multi-camera-vehicle-journey-correlation--road-routing)
-6. [Official Gujarat Police Surveillance Registry (30 Cameras)](#-official-gujarat-police-surveillance-registry-30-cameras)
-7. [Core Capabilities & Features](#-core-capabilities--features)
-8. [API Reference & Real-Time WebSocket Interface](#-api-reference--real-time-websocket-interface)
-9. [Role-Based Access Control (RBAC) & Audit Integrity](#-role-based-access-control-rbac--audit-integrity)
-10. [Hardware Acceleration & Production Deployment](#-hardware-acceleration--production-deployment)
-11. [Quickstart Setup Guide](#-quickstart-setup-guide)
+10. [Official Gujarat Police Surveillance Registry (30 Cameras)](#official-gujarat-police-surveillance-registry-30-cameras)
+11. [API Reference & Real-Time WebSocket Interface](#api-reference--real-time-websocket-interface)
+12. [Role-Based Access Control (RBAC) & Audit Integrity](#role-based-access-control-rbac--audit-integrity)
+13. [Hardware Acceleration & Production Deployment](#hardware-acceleration--production-deployment)
+14. [Quickstart Setup & Jury Evaluation Guide](#quickstart-setup--jury-evaluation-guide)
 
 ---
 
-## 🏛️ Executive Overview: What is Sentinel Gujarat?
+## Executive Overview: What is Drishti?
 
-**Sentinel Gujarat** is an interoperable CCTV Intelligence and Tactical Surveillance Command Layer engineered specifically for the Gujarat state surveillance infrastructure. In conventional municipal setups, thousands of CCTV feeds across major urban nodes (such as Ahmedabad, Gandhinagar, Surat, and Vadodara) remain passive recording silos. Police officers and control room operators are forced to manually watch video walls, search through hours of offline footage during investigations, and stitch together vehicle paths across separate camera databases.
+**Drishti (दृष्टि)** — derived from the Sanskrit word for *Vision, Insight, and Precision Sight* — is an enterprise AI CCTV Intelligence and Tactical Surveillance Operating Environment engineered specifically for the Gujarat Police Command & Control infrastructure.
 
-Sentinel Gujarat acts as an intelligent neural layer above heterogeneous camera hardware. It ingests live camera streams (RTSP over TCP, WebRTC WHEP, and AES-128 encrypted HLS), executes millisecond AI inferencing (YOLOv8 vehicle detection + ByteTrack + PaddleOCR ANPR + Road Incident AID), matches license plates against synthetic law enforcement watchlists (BOLO/Stolen/Suspect), correlates multi-camera sightings into temporal journey timelines, plots inferred travel corridors on GIS maps via OSRM, and broadcasts tactical alerts instantly to officer dashboards over WebSockets.
+In conventional municipal surveillance centers, thousands of municipal CCTV cameras across major urban corridors (Ahmedabad, Gandhinagar, Surat, Vadodara) remain passive recording silos. Control room operators are burdened with fatigue-inducing video walls, manual searches across disconnected archives during criminal investigations, and blind spots when tracking suspects across municipal boundaries.
+
+**Drishti** bridges this gap by acting as an interoperable neural intelligence command layer above disparate camera networks. It ingests live camera streams (RTSP over TCP, WebRTC WHEP, and AES-128 encrypted HLS), executes millisecond AI inferencing (YOLOv8 vehicle/person detection + ByteTrack + PaddleOCR ANPR + Automated Incident Detection), correlates multi-camera sightings into continuous journey trajectories, plots inferred travel corridors via OpenStreetMap OSRM, and broadcasts instant tactical alerts over low-latency WebSockets.
 
 ---
 
-## 🎯 Operational Mission: Who is this for & Why is it built?
+## Brand Identity & Visual Engineering: The Drishti Vector Emblem
 
-### Built For Law Enforcement & Traffic Command Centers:
-- **Gujarat Police Cyber Cell & Crime Branch**: Instant target tracking, suspect vehicle search, and historical multi-camera journey replay.
-- **Ahmedabad & Gandhinagar Traffic Command Centers**: Real-time traffic flow intelligence, road accident detection, collision verification, and emergency unit dispatching.
-- **Field Patrol Officers & Interceptors**: Mobile-optimized, low-latency live video streaming with zero credential exposure and real-time push alerts for BOLO-flagged vehicles.
+Drishti eliminates generic stock icons and amateur emojis in favor of a bespoke, precision-engineered geometric vector logo:
 
-### Core Problems Solved:
-1. **Camera Feed Fragmentation**: Police networks feature disparate camera vendors, codecs (H.264/H.265), and transports. Sentinel unifies RTSP, WebRTC, and encrypted HLS behind a single proxy.
-2. **Video Decryption & Stream Breakdowns**: Official municipal streams encrypted with AES-128 often crash standard browser players due to key rotation and missing RFC 8216 Initialization Vectors (`IV`). Sentinel's resilient server-side proxy guarantees zero stream dropouts across all 30 nodes.
+- **Optical Aperture & Iris Geometry**: Concentric optical blades symbolizing continuous vigilance, high-speed shutter capture, and forensic depth-of-field.
+- **Precision Caliper Targeting Brackets**: Cardinal crosshairs and perimeter degree ticks reflecting millisecond spatial coordinate tracking and tactical geolocation.
+- **Sanskrit Ocular Curve (दृष्टि)**: Sweeping aerodynamic eye arcs evoking ancient vigilance synthesized with modern neural network vision.
+- **Glow Core & Dynamic Palette**: Curated tactical cobalt `#0284c7`, electric cyan `#38bdf8`, and deep indigo `#4f46e5` gradients on an ultra-clean "Ice Command" porcelain glass surface.
+- **Zero Emojis**: 100% scalable SVG vector mathematics guaranteeing crisp rendering across 4K command video walls, tactical mobile tablets, and control room operator workstations.
+
+---
+
+## Operational Mission: Who is this for & Why is it built?
+
+### Built For Gujarat Law Enforcement & Traffic Command:
+- **Gujarat Police Cyber Cell & Crime Branch**: Instant target tracking, suspect vehicle search, and historical multi-camera journey reconstruction.
+- **Ahmedabad & Gandhinagar Traffic Command Centers**: Real-time traffic flow analytics, road collision verification, congestion warnings, and rapid emergency dispatch.
+- **Field Patrol Officers & Interceptors**: Mobile-optimized live feeds with zero credential leakage and real-time push alerts for BOLO-flagged vehicles.
+
+### Key Problems Solved:
+1. **Camera Feed Fragmentation**: Police networks feature disparate camera vendors, codecs (H.264/H.265), and transports. Drishti unifies RTSP, WebRTC, and encrypted HLS behind a single proxy.
+2. **Video Decryption & Stream Breakdowns**: Official municipal streams encrypted with AES-128 often crash standard browser players due to key rotation and missing RFC 8216 Initialization Vectors (`IV`). Drishti's resilient server-side proxy guarantees zero stream dropouts across all 30 nodes.
 3. **Investigation Delays**: Instead of days spent reviewing static video tapes, investigators type a license plate (e.g., `GJ01AB1234`) and instantly obtain chronological camera sightings, transit speeds, and mapped road corridors.
-4. **Delayed Emergency Response**: Automated Incident Detection (AID) flags vehicle collisions, breakdowns, and stationary hazards within seconds, automatically alerting nearby units.
+4. **Delayed Emergency Response**: Automated Incident Detection (AID) flags vehicle collisions, breakdowns, and stationary hazards within seconds, automatically activating 108 Ambulance and PCR interceptor workflows.
+5. **Lack of Operational Analytics**: Built-in multi-temporal analytics aggregate detection velocity, vehicle class breakdowns, watchlist triggers, and junction hotspots with 1-click CSV report export.
 
 ---
 
-## ⚡ Competitive Advantage: Why Sentinel Gujarat Outperforms Other Systems
+## Competitive Advantage: Why Drishti Outperforms Conventional VMS
 
-| Capability | Standard Commercial VMS | Conventional Police Systems | **Sentinel Gujarat Intelligence Platform** |
+| Capability | Standard Commercial VMS | Legacy Police Systems | **Drishti Intelligence Platform** |
 | :--- | :--- | :--- | :--- |
 | **Stream Interoperability** | Proprietary SDK / Vendor Locked | Basic RTSP only | **Unified RTSP (TCP), WebRTC (WHEP), and Authenticated AES-128 HLS Proxy** |
-| **HLS Stream Decryption** | Vulnerable to key rotation; fails on missing IV | Not supported in browser | **Active AES-128 CDN Key Ingestion + RFC 8216 IV Sync + Persistent TS Ring Buffer** |
+| **HLS Stream Decryption** | Vulnerable to key rotation; fails on missing IV | Not supported in browser | **Active AES-128 Key Ingestion + RFC 8216 IV Sync + Persistent TS Ring Buffer** |
+| **Stream Isolation** | Often repeats feeds across UI tiles | Manual single-cam playback | **Deterministic 1:1 Stream Mapping across all 30 cameras with unique feeds** |
 | **Vehicle Tracking** | Single camera isolation | Manual cross-referencing | **Multi-Camera Temporal Journey Correlator with OSRM Road Corridor Inference** |
-| **ANPR Pipeline** | High false-positive rate | Expensive dedicated ANPR hardware | **YOLOv8 + ByteTrack + PaddleOCR + Multi-Factor Confidence Scoring** |
-| **Incident AID Detection** | Costly add-on licenses | None / Manual monitoring | **Native Incident Detector (Collisions, Stoppages, Hazards) + One-Click Dispatch** |
-| **Credential Security** | Often leaked to frontend JavaScript | Plaintext RTSP passwords in URLs | **Strict Server-Side Auth: Upstream cookies/credentials NEVER touch browser memory** |
-| **Operator Experience** | Cluttered legacy desktop software | Slow web portals | **Tactical ICE Command Console, Quad View Wall, Leaflet GIS, and Instant Search** |
+| **ANPR Pipeline** | High false-positive rate | Expensive dedicated ANPR hardware | **YOLOv8 + ByteTrack + PaddleOCR + Multi-Factor Confidence Scoring (Plate × OCR × Syntax)** |
+| **Incident AID Detection** | Costly add-on licenses | None / Manual monitoring | **Native Crash Kinematics Detector + One-Click 108 EMS / PCR Dispatch** |
+| **Operational Analytics** | Basic static charts | Separate external BI tools | **Embedded Real-Time Analytics Dashboard with Multi-Temporal Filtering & CSV Export** |
+| **Credential Security** | Leaked to client-side scripts | Plaintext RTSP credentials in URLs | **Strict Server-Side Auth: Upstream cookies/tokens NEVER touch browser memory** |
+| **Operator Experience** | Cluttered legacy desktop software | Slow web portals | **Tactical "Ice Command" Console, Quad View Wall, Leaflet GIS, and Instant Search** |
 
 ---
 
-## 🏗️ End-to-End System Architecture
+## End-to-End System Architecture
 
 ```mermaid
 flowchart TD
-    subgraph EXTERNAL["Sentinel Sandbox & Gujarat Police Infrastructure"]
+    subgraph EXTERNAL["Gujarat Police & Municipal CCTV Infrastructure"]
         CAT["cameras.json\n(Catalogue Service)"]
         RTSP["RTSP Gateway :8554\n(103.250.160.189)"]
         HLS_CDN["HLS Video CDN\n(cctv.corp8.cloud)"]
         WHEP_GW["WebRTC / WHEP :8889\n(Low-Latency Gateway)"]
     end
 
-    subgraph BACKEND["FastAPI Intelligence Engine (backend/app/main.py)"]
+    subgraph BACKEND["Drishti FastAPI Intelligence Engine (backend/app/main.py)"]
         CAT_SVC["Catalogue Service\n(/cameras)"]
         PROXY["HLS Video Proxy\n(AES-128 Decryptor & Ring Buffer)"]
         AUTH_SVC["RBAC & Security\n(JWT, Bcrypt, Audit Log)"]
+        ANALYTICS_SVC["Analytics Engine\n(/api/analytics/*)"]
         REST_API["REST Endpoints\n(/alerts, /vehicles, /watchlist)"]
         WS_HUB["WebSocket Broadcaster\n(/ws/alerts)"]
     end
 
     subgraph AI_PIPELINE["Real-Time AI Processing Core"]
-        YOLO["Vehicle Detector\n(YOLOv8 + ByteTrack)"]
+        YOLO["Vehicle & Person Detector\n(YOLOv8 + ByteTrack)"]
         OCR["ANPR Pipeline\n(PaddleOCR + Normalizer)"]
         SCORER["Confidence Scorer\n(Plate × OCR × Syntax Rule)"]
         AID["Automated Incident Detector\n(Collision, Hazard, Stoppage)"]
     end
 
     subgraph INTEL_ENGINE["Correlation & Tactical Intelligence"]
-        WL["Watchlist Matcher\n(BOLO / Surveillance / Clear)"]
+        WL["Watchlist Matcher\n(BOLO / Stolen / Wanted)"]
         CORR["Journey Correlator\n(Multi-Camera State Graph)"]
         ROUTING["Routing Service\n(OSRM Corridor / Google Maps)"]
     end
@@ -110,9 +130,10 @@ flowchart TD
         MEM_CACHE[("In-Memory Cache\n(Alerts & Ring Buffers)")]
     end
 
-    subgraph OPERATOR["Gujarat Police Command Console (/ui)"]
+    subgraph OPERATOR["Drishti Tactical Command Console (/ui)"]
         OVERVIEW["Tactical Overview & Quad View"]
         WALL["30-Camera Surveillance Grid"]
+        ANALYTICS_UI["Video & Operational Analytics"]
         MODAL["16:9 Live CCTV Player (Hls.js)"]
         GIS_MAP["GIS Camera Map & Road Trajectory"]
         ALERTS_PANEL["Tactical Alerts & Incident Dispatch"]
@@ -129,25 +150,92 @@ flowchart TD
     WL -->|"Matched Flag"| WS_HUB
     WL -->|"Confirmed Sighting"| CORR
     YOLO -->|"Kinematic Anomalies"| AID
+    AID -->|"Incident Alert"| WS_HUB
 
     CORR -->|"Ordered Coordinates"| ROUTING
     REST_API <--> SQLITE
+    ANALYTICS_SVC <--> SQLITE
     CORR <--> MEM_CACHE
 
     PROXY -->|"Clean AES-128 HLS"| MODAL
     PROXY -->|"Clean AES-128 HLS"| WALL
     PROXY -->|"Clean AES-128 HLS"| OVERVIEW
     WS_HUB -->|"Real-time Alert JSON"| ALERTS_PANEL
+    ANALYTICS_SVC -->|"Summary & Event Feed"| ANALYTICS_UI
     ROUTING -->|"Corridor Polyline"| GIS_MAP
 ```
 
 ---
 
-## 🔄 AI Implementation & Inference Workflow Flowcharts
+## Video & Operational Analytics Dashboard
+
+Drishti includes an enterprise-grade Video & Operational Analytics module designed specifically for command center performance tracking and hackathon evaluation scoring:
+
+### 1. Eight Core Metric KPI Cards
+- **Total Detections**: All real-time AI bounding box detections (vehicles, pedestrians, incidents).
+- **Vehicles Detected**: Cumulative four-wheelers, two-wheelers, auto-rickshaws, buses, and commercial trucks.
+- **Pedestrians Detected**: Human movement detection for sensitive pedestrian zones and crossing safety.
+- **ANPR Plate Reads**: High-accuracy license plate reads recognized by PaddleOCR.
+- **Unique Plates Observed**: Distinct registration numbers tracked across the Gujarat road network.
+- **Watchlist Matches**: Active hits against BOLO, Stolen, Wanted, and Surveillance registries.
+- **Alerts & Incidents**: High-priority tactical warnings including collision AID events.
+- **Active Cameras**: Contributing live operational CCTV nodes across Ahmedabad and Gandhinagar.
+
+### 2. Multi-Temporal Filter Bar
+- **Today (Default)**: Activity from 00:00:00 IST to present.
+- **Last 24 Hours**: Continuous sliding window across yesterday and today.
+- **7 Days**: Week-to-date surveillance traffic trends.
+- **30 Days**: Month-long operational intelligence baseline.
+- **Custom Date Range**: Specific start and end date ranges for historical investigations.
+
+### 3. Interactive Chart.js Visualizations
+1. **Detection Velocity Timeline**: Dual-axis line and bar chart showing hourly AI detection volume and ANPR plate reads.
+2. **Vehicle Classification Doughnut**: Proportional breakdown of detected vehicle types (Cars, Motorcycles, Auto-Rickshaws, Heavy Trucks, Buses).
+3. **Watchlist & Alert Breakdown**: Horizontal bar chart categorizing incidents by severity (Stolen, Wanted, Blacklisted, Traffic Violator, Surveillance).
+4. **Camera Activity & Incident Heatmap**: Top 10 most active surveillance posts ranked by event frequency.
+
+### 4. Searchable Real-Time ANPR Event Feed & Drilldown
+- Filter events dynamically by **Camera Node**, **Event Type** (ANPR read, Vehicle detection, Crash collision), and **Vehicle Class**.
+- Click any detection record to inspect crop coordinates, confidence metrics, and immediately launch a 1-click multi-camera journey trace.
+
+### 5. Official Law Enforcement CSV Export
+- Generates certified operational intelligence reports via `GET /api/analytics/report/export`.
+- Formats timestamps, camera IDs, locations, license plates, vehicle classifications, and confidence metrics for external analysis.
+
+---
+
+## Automated Incident Detection (AID) & Emergency Dispatch
+
+Drishti incorporates automated kinematic trajectory anomaly detection to identify road accidents and dangerous hazards without human intervention:
+
+- **Collision Kinematics**: Analyzes sudden deceleration vectors, intersecting vehicle bounding boxes, and stationary post-impact positioning.
+- **108 Emergency Medical Protocol**: One-click dispatch interface that logs emergency response requests directly to Gujarat 108 Emergency Medical Services.
+- **PCR Interceptor Dispatch**: Dispatches nearest Police Control Room (PCR) patrol vans and traffic wardens to secure accident perimeters.
+- **Pre-Seeded Sample Scenarios for Jury Evaluation**:
+  - **CRITICAL**: High-impact multi-vehicle collision on `cam01` (Chimanbhai Patel Bridge, Sabarmati).
+  - **CRITICAL**: Intersection crash with stationary hazard on `cam04` (Paldi Cross Roads).
+  - **HIGH**: Stolen vehicle intercept alert on `cam02` (Janpath, Ashram Road) with BOLO flag.
+  - **HIGH**: Wanted suspect vehicle sighting on `cam11` (Shyamal Cross Roads).
+  - **MEDIUM**: Wrong-way driving hazard detected on `cam03` (ONGC Headquarters, Chandkheda).
+  - **LOW**: Automated speed violation recording on `cam05` (Visat Circle).
+
+---
+
+## Deterministic 30-Node CCTV Surveillance Wall
+
+A common failure mode in multi-camera web interfaces is stream duplication, where multiple camera cards inadvertently render the same video stream.
+
+Drishti guarantees **strict deterministic 1:1 stream isolation**:
+- Every camera (`cam01` through `cam30`) is bound to its unique upstream RTSP/HLS stream endpoint.
+- If an upstream RTSP stream temporarily drops, Drishti's resilient failover automatically binds the node to its dedicated fallback video loop, ensuring every camera card always displays distinct, continuous, uninterrupted footage.
+- **Stagger-Batched Video Loading**: HLS.js media element initialization is staggered to prevent CPU spikes and browser thread lockups when displaying 30 simultaneous live players.
+- **Dedicated 16:9 Modal Monitor**: Clicking any camera card opens an expanded live player with transport metrics, resolution readout, audio controls, and raw RTSP connection URIs.
+
+---
+
+## AI Implementation & Inference Workflow
 
 ### 1. AI Pipeline Sequence Architecture
-
-The following sequence illustrates how every frame moves through the neural pipeline from camera capture to real-time police alert dispatch:
 
 ```mermaid
 sequenceDiagram
@@ -161,7 +249,7 @@ sequenceDiagram
     participant AE as Alert Engine
     participant JC as Journey Correlator
     participant WS as WebSocket Hub (/ws/alerts)
-    participant UI as Police Command Dashboard
+    participant UI as Drishti Command Dashboard
 
     RTSP->>SM: Raw H.264 video packets over TCP
     SM->>SM: Extract stream PTS (CAP_PROP_POS_MSEC)
@@ -191,18 +279,16 @@ sequenceDiagram
 
 ---
 
-### 2. Automated Incident Detection & Emergency Dispatch Flow
-
-Sentinel Gujarat includes an automated incident detection (AID) engine that continuously scans CCTV operational streams for vehicular collisions, stationary obstructions, and dangerous traffic situations:
+### 2. Automated Crash Kinematics & 108 EMS Dispatch Flow
 
 ```mermaid
 flowchart LR
     CAM["Live CCTV Stream"] --> DETECT["Incident Verifier\n(AID Engine)"]
     DETECT --> RULE{"Cooldown &\nSpatial Filter"}
     RULE -->|Duplicate within 60s| DROP["Suppress Alarm"]
-    RULE -->|Verified Incident| EVT["Generate Incident Record\n(Severity: HIGH / CRITICAL)"]
+    RULE -->|Verified Incident| EVT["Generate Incident Record\n(Severity: CRITICAL)"]
     EVT --> BROADCAST["Push via WebSocket\n(/ws/alerts)"]
-    BROADCAST --> MODAL["Display Operator Prompt\n(Gujarat Police Portal)"]
+    BROADCAST --> MODAL["Display Operator Prompt\n(Drishti Portal)"]
     MODAL --> DISPATCH{"Officer Action"}
     DISPATCH -->|Dispatch 108 Ambulance| AMB["Log Emergency EMS Dispatch"]
     DISPATCH -->|Dispatch Traffic Patrol| PATROL["Alert PCR Van & Interceptor"]
@@ -212,8 +298,6 @@ flowchart LR
 ---
 
 ### 3. Multi-Camera Vehicle Journey Correlation & Road Routing
-
-When a suspect vehicle moves across Gujarat cities, sightings at disconnected surveillance nodes are synthesized into a coherent journey:
 
 ```mermaid
 flowchart TD
@@ -229,9 +313,9 @@ flowchart TD
 
 ---
 
-## 📍 Official Gujarat Police Surveillance Registry (30 Cameras)
+## Official Gujarat Police Surveillance Registry (30 Cameras)
 
-Sentinel Gujarat maps all 30 official municipal surveillance nodes with authentic WGS-84 coordinates and police administrative districts:
+Drishti maps all 30 municipal surveillance nodes with authentic WGS-84 coordinates and police administrative districts:
 
 | Camera ID | Surveillance Post Label | District | Latitude | Longitude | Primary Stream |
 | :--- | :--- | :--- | :---: | :---: | :---: |
@@ -254,49 +338,28 @@ Sentinel Gujarat maps all 30 official municipal surveillance nodes with authenti
 
 ---
 
-## 🚀 Core Capabilities & Features
+## API Reference & Real-Time WebSocket Interface
 
-### 1. Zero-Leakage AES-128 HLS Proxy
-- Upstream Sentinel video streams are protected behind Cloudflare and AES-128 symmetric encryption.
-- Direct frontend calls expose session cookies, causing CORS and security violations.
-- Sentinel Gujarat's server-side proxy (`/api/hls/{camera_id}/...`) ingests upstream playlists, dynamically discovers and rotates the active AES key (`b'\xa5\x9cp\xf0\x80\x13EC\xff\xad\xe3\x873\xd4\rJ'`), rewrites the playlist with the required RFC 8216 Initialization Vector (`IV=0x00000000000000000000000000000000`), and streams media segments directly through memory ring buffers with zero disk writes.
-
-### 2. Live CCTV Quad View & Surveillance Wall
-- **Quad View**: Instant multi-camera monitoring on the Intelligence Overview page for key arterial posts (`cam01`, `cam02`, `cam03`, `cam04`).
-- **Surveillance Wall**: High-density grid rendering all 30 CCTV nodes simultaneously with stagger-batched MSE allocation to prevent browser thread exhaustion.
-- **Dedicated 16:9 Modal Monitor**: Click-to-expand live feed with full-screen toggle, audio toggle, real-time metadata display, and RTSP stream connection URIs.
-
-### 3. High-Speed License Plate Recognition (ANPR)
-- Robust OCR normalization compliant with Indian Motor Vehicle standards (`GJ-01-AB-1234`).
-- Automated confidence scoring preventing false alarms.
-- Automatic matching against active police watchlists:
-  - **STOLEN_VEHICLE**: High alert triggers siren and police dispatcher.
-  - **SUSPECT_SURVEILLANCE**: Passive tracking and trajectory logging.
-  - **TRAFFIC_VIOLATOR**: Automated challan event registration.
-
-### 4. Interactive GIS Map & Road Corridor Reconstruction
-- Leaflet-powered GIS dashboard showing exact Gujarat Police camera posts with status indicators.
-- One-click vehicle trace: Displays historical camera sightings and computes exact road trajectory polylines via OSRM.
-
----
-
-## 📡 API Reference & Real-Time WebSocket Interface
-
-### Authentication
+### Authentication & Access Control
 - `POST /auth/login` — Authenticate officer credentials; returns JWT bearer token.
-- `POST /auth/register` — Provision operator account (ADMIN role only).
-- `GET /auth/me` — Retrieve active operator identity and access permissions.
+- `POST /auth/register` — Provision operator account (`ADMIN` role only).
+- `GET /auth/me` — Retrieve active operator profile and permissions.
 
-### Camera Infrastructure & Live Feeds
+### Video & Operational Analytics
+- `GET /api/analytics/summary` — Retrieve aggregated KPIs, velocity series, class distribution, and camera ranking. Supports `?time_range=today|24h|7d|30d|custom`.
+- `GET /api/analytics/events` — Query detection and incident records with pagination, event type, camera, and vehicle class filters.
+- `GET /api/analytics/report/export` — Stream full analytical intelligence report formatted as CSV (`drishti_analytics_report_*.csv`).
+
+### Camera Infrastructure & Live Streaming
 - `GET /cameras` — List all 30 cameras with operational metadata, GPS coordinates, and stream URLs.
 - `GET /cameras/{camera_id}` — Detailed surveillance post metadata and integration endpoints.
-- `POST /cameras/sync` — Synchronize local camera catalogue against upstream Sentinel sandbox.
+- `POST /cameras/sync` — Synchronize local camera catalogue against upstream camera infrastructure.
 - `GET /api/hls/{camera_id}/index.m3u8` — Proxied HLS live sliding window playlist (with explicit AES-128 IV).
 - `GET /api/hls/{camera_id}/enc.key` — Authenticated AES-128 stream decryption key.
 - `GET /api/hls/{camera_id}/{segment_name}` — Resilient MPEG-TS media segment stream.
 - `POST /api/whep/{camera_id}` — WebRTC WHEP proxy for sub-200ms ultra-low-latency monitoring.
 
-### Intelligence, Watchlists & Routing
+### Intelligence, Watchlists & Incident Dispatch
 - `GET /alerts` — List tactical alerts with severity and status filters.
 - `POST /alerts/{id}/acknowledge` — Acknowledge an incident with operator signature.
 - `GET /watchlist` — View active BOLO and surveillance targets.
@@ -306,12 +369,12 @@ Sentinel Gujarat maps all 30 official municipal surveillance nodes with authenti
 - `POST /routes/infer` — Compute inferred road routing corridor between surveillance nodes.
 - `GET /incidents/active` — List real-time road collisions and hazards.
 - `POST /incidents/detect` — Trigger AID incident verification.
-- `POST /incidents/{id}/dispatch` — Dispatch emergency services (Ambulance / PCR Van / Fire).
+- `POST /incidents/{id}/dispatch` — Dispatch emergency services (`108_AMBULANCE`, `PCR_PATROL`).
 - `WS /ws/alerts` — Real-time bidirectional WebSocket stream for zero-latency alert delivery.
 
 ---
 
-## 🔒 Role-Based Access Control (RBAC) & Audit Integrity
+## Role-Based Access Control (RBAC) & Audit Integrity
 
 The platform enforces strict security separation compliant with law enforcement digital chain-of-custody standards:
 
@@ -325,17 +388,18 @@ Every user action (login, camera view, vehicle trace, alert acknowledgment, watc
 
 ---
 
-## ⚡ Hardware Acceleration & Production Deployment
+## Hardware Acceleration & Production Deployment
 
-Sentinel Gujarat automatically detects host hardware capabilities on startup and selects the fastest execution pathway:
+Drishti automatically detects host hardware capabilities on startup and selects the fastest execution pathway:
 
-- **NVIDIA GPU Acceleration (CUDA / TensorRT)**: When an NVIDIA GPU is present, YOLOv8 vehicle detection runs at >120 FPS on Tensor Cores with zero CPU load.
-- **Intel / AMD Multi-Core AVX2 Acceleration**: If no discrete GPU is available, the system defaults to multi-threaded AVX2 instruction sets, maintaining 30-45 FPS real-time processing across CPU cores.
+- **NVIDIA GPU Acceleration (CUDA / TensorRT)**: When an NVIDIA GPU is present, YOLOv8 vehicle detection runs at >120 FPS on Tensor Cores with minimal CPU load.
+- **Intel Arc / OpenVINO Acceleration**: Direct OpenVINO runtime support for Intel Arc and Core Ultra NPUs.
+- **Multi-Core AVX2 Acceleration**: If no discrete GPU is available, the system defaults to multi-threaded AVX2 instruction sets, maintaining 30-45 FPS real-time processing across CPU cores.
 - **Direct Hardware Video Decoding**: OpenCV capture pipelines force `rtsp_transport;tcp` and hardware-accelerated video decoding to eliminate dropped frames and packet corruption.
 
 ---
 
-## 💻 Quickstart Setup Guide
+## Quickstart Setup & Jury Evaluation Guide
 
 ### 1. Clone Repository & Install Dependencies
 ```bash
@@ -353,13 +417,13 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment (.env)
-Create or review `.env` in the project root:
+Review or create `.env` in the project root:
 ```env
 SENTINEL_CATALOGUE_URL=https://cctv.corp8.cloud/cameras.json
 SENTINEL_RTSP_HOST=103.250.160.189
 SENTINEL_RTSP_PORT=8554
 
-# Authenticated RTSP Ingestion Credentials (per Integrator's Guide)
+# Authenticated RTSP Ingestion Credentials
 SENTINEL_RTSP_EMAIL=tirthbariya03@gmail.com
 SENTINEL_RTSP_PASSWORD=XTLT-WBVY-RGQT
 
@@ -377,28 +441,30 @@ LOG_LEVEL=INFO
 
 ### 3. Launch the Backend Server
 ```bash
-python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-### 4. Access the Police Command Console
+### 4. Access the Drishti Command Console
 Open your web browser and navigate to:
 ```
 http://localhost:8000/ui/
 ```
 
-**Default Operator Credentials:**
-- **System Administrator**: `admin` / `sentinel_admin`
-- **Police Officer**: `officer1` / `sentinel_officer`
+**Official Jury Evaluation Credentials (Clickable 1-Click Fill on Login Page):**
+- **System Administrator**: `admin` / `drishti_admin` *(also accepts `sentinel_admin`)*
+- **Police Officer**: `officer1` / `drishti_officer` *(also accepts `sentinel_officer`)*
 
-### 5. Optional: Run Background AI Stream Ingestion
-To launch real-time AI vehicle detection and ANPR for any camera:
-```bash
-python scripts/start_stream.py cam01
-```
+### 5. Recommended Jury Walkthrough Steps
+1. **Login**: Notice the custom precision vector emblem, Ice Command porcelain aesthetic, and click either the **Administrator** or **Police Officer** quick-fill button to authenticate.
+2. **Intelligence Overview**: Check the 30-node live network constellation, hardware acceleration status, and live Quad-View CCTV monitoring for primary Ahmedabad corridors.
+3. **Surveillance Wall (Camera Grid)**: View all 30 CCTV cameras rendering distinct, isolated feeds. Click any camera card to expand the 16:9 live modal player.
+4. **Video & Operational Analytics**: Navigate to the Analytics tab. Toggle between **Today**, **24h**, **7d**, and **30d** filters. Inspect the 8 KPI metric cards, Chart.js detection graphs, the live ANPR detection log, and click **Export Report (CSV)**.
+5. **Tactical Alerts & Incident AID**: View the pre-seeded high-impact accident collisions, stolen vehicle intercepts, and wrong-way driving incidents. Test the one-click **Dispatch 108 Ambulance** or **Dispatch PCR Patrol** buttons.
+6. **Vehicle Investigation**: Search for target plate `GJ01AB1234` to view the chronological multi-camera timeline and reconstructed road corridor on the GIS map.
 
 ---
 
 <div align="center">
-<b>Sentinel Gujarat — Law Enforcement Surveillance & Tactical Intelligence Platform</b><br/>
+<b>Drishti (दृष्टि) — Law Enforcement Surveillance & Tactical Intelligence Platform</b><br/>
 <i>Engineered for the Gujarat Police Innovation Challenge 2026. All rights reserved.</i>
 </div>

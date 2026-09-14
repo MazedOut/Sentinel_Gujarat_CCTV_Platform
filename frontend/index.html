@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel Gujarat — Police CCTV Intelligence & Surveillance Operating Environment</title>
-  
+  <title>Drishti — AI CCTV Intelligence & Surveillance Operating Platform</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='24' cy='24' r='21' stroke='%230284c7' stroke-width='2' stroke-dasharray='8 4'/%3E%3Cpath d='M10 24C14 16.5 18.5 13 24 13C29.5 13 34 16.5 38 24C34 31.5 29.5 35 24 35C18.5 35 14 31.5 10 24Z' fill='%230284c7' fill-opacity='0.25' stroke='%2338bdf8' stroke-width='2'/%3E%3Ccircle cx='24' cy='24' r='8' fill='%230f172a' stroke='%232563eb' stroke-width='2'/%3E%3Ccircle cx='24' cy='24' r='4' fill='%2338bdf8'/%3E%3C/svg%3E" />
+
   <!-- Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,6 +18,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- Chart.js for Video & Operational Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <link rel="stylesheet" href="style.css?v=20260914_ice" />
 </head>
 <body>
@@ -24,67 +28,171 @@
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <!--  LOGIN SCREEN: GUJARAT POLICE SECURE OPERATIONS PORTAL                 -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<div id="login-screen" class="login-screen">
-  <div class="login-bg-orbs">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+<div id="login-screen" class="login-screen ice-login-screen">
+  <!-- Ambient Ice Mesh & Frost Glows -->
+  <div class="ice-bg-mesh">
+    <div class="ice-orb ice-orb-1"></div>
+    <div class="ice-orb ice-orb-2"></div>
+    <div class="ice-orb ice-orb-3"></div>
+    <div class="ice-grid-pattern"></div>
   </div>
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="login-logo-badge">
-        <i data-lucide="shield" style="width:28px;height:28px;"></i>
+
+  <div class="ice-login-wrapper">
+    <!-- Premium Ice-White Frosted Card -->
+    <div class="login-card ice-card">
+      
+      <!-- Gujarat Police Official Header -->
+      <div class="login-logo ice-logo-section">
+        <div class="login-logo-badge ice-badge drishti-hero-badge">
+          <svg class="drishti-logo-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:44px;height:44px;display:block;">
+            <defs>
+              <linearGradient id="drishtiGradPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0284c7" />
+                <stop offset="50%" stop-color="#2563eb" />
+                <stop offset="100%" stop-color="#4f46e5" />
+              </linearGradient>
+              <linearGradient id="drishtiGradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+              <linearGradient id="drishtiGradEye" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.28" />
+                <stop offset="100%" stop-color="#2563eb" stop-opacity="0.08" />
+              </linearGradient>
+            </defs>
+            <!-- Outer Caliper Sensor Ring -->
+            <circle cx="24" cy="24" r="21.5" stroke="url(#drishtiGradPrimary)" stroke-width="1.75" stroke-dasharray="8 4 2 4" stroke-opacity="0.9" />
+            <!-- Cardinal Targeting Brackets -->
+            <path d="M24 1.5V5.5 M24 42.5V46.5 M1.5 24H5.5 M42.5 24H46.5" stroke="url(#drishtiGradCyan)" stroke-width="2.2" stroke-linecap="round" />
+            <!-- Corner Precision Tick Marks -->
+            <path d="M9.5 9.5L7 7 M38.5 9.5L41 7 M9.5 38.5L7 41 M38.5 38.5L41 41" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.55" />
+            <!-- Middle Aperture Ring -->
+            <circle cx="24" cy="24" r="15" stroke="url(#drishtiGradPrimary)" stroke-width="1.8" stroke-opacity="0.85" />
+            <!-- Drishti Geometric Eye Arc (Vision Motif) -->
+            <path d="M10 24C14 16.5 18.5 12.8 24 12.8C29.5 12.8 34 16.5 38 24C34 31.5 29.5 35.2 24 35.2C18.5 35.2 14 31.5 10 24Z" fill="url(#drishtiGradEye)" stroke="url(#drishtiGradCyan)" stroke-width="1.8" stroke-linejoin="round" />
+            <!-- Tactical Optical Iris Blades -->
+            <circle cx="24" cy="24" r="7.8" fill="#0f172a" stroke="url(#drishtiGradPrimary)" stroke-width="1.8" />
+            <!-- Glowing Center Optical Pupil Core -->
+            <circle cx="24" cy="24" r="4.2" fill="url(#drishtiGradCyan)" />
+            <circle cx="22.2" cy="22.2" r="1.3" fill="#ffffff" />
+          </svg>
+        </div>
+        <div class="login-title ice-title">DRISHTI</div>
+        <div class="login-subtitle ice-subtitle">Gujarat Police Command Center</div>
+        <div class="login-dept ice-dept">AI-POWERED CCTV SURVEILLANCE & INVESTIGATION PLATFORM</div>
+        <div class="ice-status-badge">
+          <span class="ice-pulse-dot"></span>
+          <span>GATEWAY ONLINE • DEPLOYMENT READY</span>
+        </div>
       </div>
-      <div class="login-title">SENTINEL</div>
-      <div class="login-subtitle">Gujarat Police Command</div>
-      <div class="login-dept">INTELLIGENCE & SURVEILLANCE SYSTEM</div>
+
+      <!-- Jury & Evaluator Credentials Card -->
+      <div class="jury-showcase-card">
+        <div class="jury-badge-row">
+          <div class="jury-badge-title">
+            <i data-lucide="key-round" style="width:13px;height:13px;"></i>
+            <span>JURY EVALUATION CREDENTIALS</span>
+          </div>
+          <span class="jury-badge-caption">Click role to auto-fill</span>
+        </div>
+        
+        <div class="jury-roles-grid">
+          <button type="button" class="jury-role-btn active" id="jury-btn-admin" onclick="selectJuryRole('admin', 'drishti_admin', this)">
+            <div class="role-icon admin-icon">
+              <i data-lucide="shield-alert" style="width:14px;height:14px;"></i>
+            </div>
+            <div class="role-meta">
+              <div class="role-name">Administrator</div>
+              <div class="role-creds">admin <span class="role-sep">•</span> drishti_admin</div>
+            </div>
+            <span class="role-pill admin-pill">FULL COMMAND</span>
+          </button>
+
+          <button type="button" class="jury-role-btn" id="jury-btn-officer" onclick="selectJuryRole('officer1', 'drishti_officer', this)">
+            <div class="role-icon officer-icon">
+              <i data-lucide="user-check" style="width:14px;height:14px;"></i>
+            </div>
+            <div class="role-meta">
+              <div class="role-name">Police Officer</div>
+              <div class="role-creds">officer1 <span class="role-sep">•</span> drishti_officer</div>
+            </div>
+            <span class="role-pill officer-pill">TACTICAL</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Authentication Form -->
+      <form id="login-form" class="login-form ice-form">
+        <div class="form-group ice-form-group">
+          <label for="login-username">Operator Identifier</label>
+          <div class="ice-input-container">
+            <i data-lucide="user" class="ice-input-icon"></i>
+            <input 
+              type="text" 
+              id="login-username" 
+              placeholder="e.g. admin or officer1" 
+              required 
+              autocomplete="username"
+              value="admin"
+            />
+          </div>
+        </div>
+
+        <div class="form-group ice-form-group">
+          <label for="login-password">Access Credential</label>
+          <div class="ice-input-container">
+            <i data-lucide="lock" class="ice-input-icon"></i>
+            <input 
+              type="password" 
+              id="login-password" 
+              placeholder="••••••••••••" 
+              required 
+              autocomplete="current-password"
+              value="drishti_admin"
+            />
+            <button type="button" class="ice-eye-btn" onclick="togglePasswordVisibility()" title="Toggle visibility">
+              <i data-lucide="eye" id="login-pwd-eye" style="width:15px;height:15px;"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div id="login-error" class="login-error ice-login-error hidden"></div>
+        
+        <button type="submit" id="login-btn" class="login-btn ice-login-btn">
+          <span>AUTHENTICATE & ENTER COMMAND</span>
+          <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+        </button>
+      </form>
+
+      <!-- Security Trust Footer -->
+      <div class="ice-footer">
+        <i data-lucide="shield" style="width:12px;height:12px;"></i>
+        <span>Government of Gujarat • Directorate of Police Telecommunications & CCTV Surveillance</span>
+      </div>
+
     </div>
-    
-    <form id="login-form" class="login-form">
-      <div class="form-group">
-        <label for="login-username">Operator Identifier</label>
-        <input 
-          type="text" 
-          id="login-username" 
-          placeholder="e.g. admin or officer1" 
-          required 
-          autocomplete="username"
-          value="admin"
-        />
-      </div>
-      <div class="form-group">
-        <label for="login-password">Access Credential</label>
-        <input 
-          type="password" 
-          id="login-password" 
-          placeholder="••••••••••••" 
-          required 
-          autocomplete="current-password"
-          value="sentinel_admin"
-        />
-      </div>
-      
-      <div id="login-error" class="login-error hidden"></div>
-      
-      <button type="submit" id="login-btn" class="login-btn">
-        <span>AUTHENTICATE</span>
-        <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
-      </button>
-    </form>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
-<!--  MAIN APPLICATION SHELL: SENTINEL ICE COMMAND ENVIRONMENT               -->
+<!--  MAIN APPLICATION SHELL: DRISHTI ICE COMMAND ENVIRONMENT               -->
 <!-- ═══════════════════════════════════════════════════════════════════════ -->
 <div id="app" class="app-container hidden">
 
   <!-- ─── COMMAND RAIL: SLIM FLOATING OPERATIONAL CONTROL SURFACE ──────── -->
   <nav class="command-rail">
     <div class="rail-brand" onclick="switchTab('overview')">
-      <div class="rail-badge-icon">
-        <i data-lucide="shield" style="width:20px;height:20px;"></i>
+      <div class="rail-badge-icon drishti-rail-badge">
+        <svg class="drishti-logo-svg-small" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:24px;height:24px;display:block;">
+          <circle cx="24" cy="24" r="21" stroke="#0284c7" stroke-width="2" stroke-dasharray="6 3" />
+          <path d="M24 2V5 M24 43V46 M2 24H5 M43 24H46" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" />
+          <path d="M10 24C14 16.5 18.5 13 24 13C29.5 13 34 16.5 38 24C34 31.5 29.5 35 24 35C18.5 35 14 31.5 10 24Z" fill="rgba(56,189,248,0.25)" stroke="#38bdf8" stroke-width="2" />
+          <circle cx="24" cy="24" r="7.5" fill="#0f172a" stroke="#2563eb" stroke-width="2" />
+          <circle cx="24" cy="24" r="3.8" fill="#38bdf8" />
+          <circle cx="22.5" cy="22.5" r="1.2" fill="#ffffff" />
+        </svg>
       </div>
-      <span class="rail-brand-code">GJ-POL</span>
+      <span class="rail-brand-code">DRISHTI</span>
     </div>
     
     <div class="rail-nav">
@@ -96,7 +204,11 @@
         <i data-lucide="video"></i>
         <span>Camera Grid</span>
       </button>
-      <button class="nav-item" data-tab="alerts" id="nav-alerts" data-title="03 / Tactical Alerts">
+      <button class="nav-item" data-tab="analytics" id="nav-analytics" data-title="03 / Video & Operational Analytics">
+        <i data-lucide="bar-chart-3"></i>
+        <span>Analytics</span>
+      </button>
+      <button class="nav-item" data-tab="alerts" id="nav-alerts" data-title="04 / Tactical Alerts">
         <i data-lucide="bell-ring"></i>
         <span>Alerts</span>
         <span class="badge" id="alert-badge">0</span>
@@ -140,7 +252,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <div class="brand-title-wrap">
-          <span class="brand-emblem">SENTINEL</span>
+          <span class="brand-emblem">DRISHTI</span>
           <span class="brand-dept">Gujarat Police Control</span>
         </div>
         <div class="topbar-divider"></div>
@@ -287,7 +399,7 @@
           
           <div class="sentinel-info">
             <div class="info-row">
-              <span class="info-label">Sentinel Gateway Host</span>
+              <span class="info-label">Drishti Gateway Host</span>
               <code>103.250.160.189:8554</code>
             </div>
             <div class="info-row">
@@ -311,7 +423,7 @@
               <div class="arch-icon" style="background: linear-gradient(135deg, #2563eb, #1d4ed8)">
                 <i data-lucide="video"></i>
               </div>
-              <div class="arch-label">Sentinel CCTV<br><small>30 Live Cameras</small></div>
+              <div class="arch-label">Drishti CCTV<br><small>30 Live Cameras</small></div>
             </div>
             <div class="arch-arrow"><i data-lucide="arrow-right"></i></div>
             
@@ -396,7 +508,7 @@
       <div id="camera-grid" class="camera-grid">
         <div class="loading-state">
           <div class="spinner"></div>
-          <p>Loading surveillance cameras from Sentinel catalogue...</p>
+          <p>Loading surveillance cameras from Drishti catalogue...</p>
         </div>
       </div>
     </section>
@@ -460,7 +572,7 @@
         <div class="empty-state">
           <i data-lucide="search"></i>
           <h3>Enter a registration plate to initiate trace</h3>
-          <p>Sentinel cross-references YOLOv8 detection logs and PaddleOCR records.<br>
+          <p>Drishti cross-references AI detection logs and PaddleOCR records.<br>
           Confirmed sightings are mapped sequentially; transitions are marked as <strong>INFERRED POSSIBLE ROUTE</strong>.</p>
         </div>
       </div>
@@ -645,7 +757,341 @@
       </div>
     </section>
 
+    <!-- ─── TAB: VIDEO & OPERATIONAL CCTV ANALYTICS ───────────────────── -->
+    <section id="tab-analytics" class="tab-content">
+      <!-- Analytics Control & Filter Bar -->
+      <div class="analytics-control-bar">
+        <div class="analytics-header-titles">
+          <div class="analytics-title-row">
+            <div class="analytics-badge-icon">
+              <i data-lucide="bar-chart-2" style="width:20px;height:20px;"></i>
+            </div>
+            <div>
+              <h2 class="analytics-main-title">VIDEO & OPERATIONAL CCTV ANALYTICS</h2>
+              <div class="analytics-sub-title">Multi-Camera AI Detections • ANPR Throughput • Tracking Velocity • Infrastructure Health</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-filters-group">
+          <!-- Time Range Segmented Control -->
+          <div class="analytics-time-pills" id="analytics-time-pills">
+            <button type="button" class="time-pill active" data-range="today" onclick="setAnalyticsTimeRange('today')">Today</button>
+            <button type="button" class="time-pill" data-range="24h" onclick="setAnalyticsTimeRange('24h')">Last 24h</button>
+            <button type="button" class="time-pill" data-range="7d" onclick="setAnalyticsTimeRange('7d')">7 Days</button>
+            <button type="button" class="time-pill" data-range="30d" onclick="setAnalyticsTimeRange('30d')">30 Days</button>
+          </div>
+
+          <!-- Dropdown Filters -->
+          <div class="analytics-select-wrap">
+            <select id="analytics-filter-camera" class="analytics-select" onchange="applyAnalyticsFilters()">
+              <option value="">All 30 Cameras</option>
+            </select>
+          </div>
+
+          <div class="analytics-select-wrap">
+            <select id="analytics-filter-dept" class="analytics-select" onchange="applyAnalyticsFilters()">
+              <option value="">All Departments</option>
+            </select>
+          </div>
+
+          <div class="analytics-select-wrap">
+            <select id="analytics-filter-event-type" class="analytics-select" onchange="applyAnalyticsFilters()">
+              <option value="">All Event Types</option>
+              <option value="vehicle">Vehicles (YOLO26)</option>
+              <option value="person">Persons / Pedestrians</option>
+              <option value="anpr">ANPR Plate Reads</option>
+              <option value="watchlist">Watchlist Matches</option>
+              <option value="crash">Accidents & Collisions</option>
+            </select>
+          </div>
+
+          <!-- Export & Refresh Buttons -->
+          <button type="button" class="analytics-btn-export" onclick="exportAnalyticsReport('csv')" title="Export Official CSV Report">
+            <i data-lucide="download" style="width:14px;height:14px;"></i>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" class="analytics-btn-refresh" onclick="loadAnalyticsData()" title="Refresh Telemetry">
+            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Executive Metrics Row (8 Clickable Cards) -->
+      <div class="analytics-kpi-grid">
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('all', 'Total Detections')">
+          <div class="kpi-top">
+            <span class="kpi-label">Total Detections</span>
+            <div class="kpi-icon-badge blue"><i data-lucide="scan" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val" id="an-total-detections">--</div>
+          <div class="kpi-footer"><span class="kpi-hint">Click to drill down</span></div>
+        </div>
+
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('vehicle', 'Vehicle Detections')">
+          <div class="kpi-top">
+            <span class="kpi-label">Vehicle Detections</span>
+            <div class="kpi-icon-badge blue"><i data-lucide="car" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val" id="an-vehicle-detections">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">Cars, Bikes, Buses, Trucks</span></div>
+        </div>
+
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('person', 'Person Detections')">
+          <div class="kpi-top">
+            <span class="kpi-label">Person Detections</span>
+            <div class="kpi-icon-badge indigo"><i data-lucide="users" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val" id="an-person-detections">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">Pedestrian flow</span></div>
+        </div>
+
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('anpr', 'ANPR Plate Reads')">
+          <div class="kpi-top">
+            <span class="kpi-label">ANPR Plate Reads</span>
+            <div class="kpi-icon-badge cyan"><i data-lucide="credit-card" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val" id="an-anpr-reads">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">PaddleOCR recognition</span></div>
+        </div>
+
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('anpr', 'Unique Plates Observed')">
+          <div class="kpi-top">
+            <span class="kpi-label">Unique Plates</span>
+            <div class="kpi-icon-badge teal"><i data-lucide="hash" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val" id="an-unique-plates">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">Distinct registrations</span></div>
+        </div>
+
+        <div class="analytics-kpi-card danger-card" onclick="openAnalyticsDrilldown('watchlist', 'Watchlist Target Matches')">
+          <div class="kpi-top">
+            <span class="kpi-label">Watchlist Matches</span>
+            <div class="kpi-icon-badge red"><i data-lucide="shield-alert" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val text-red" id="an-watchlist-matches">--</div>
+          <div class="kpi-footer"><span class="kpi-sub text-red">Stolen / Wanted vehicles</span></div>
+        </div>
+
+        <div class="analytics-kpi-card warning-card" onclick="switchTab('alerts')">
+          <div class="kpi-top">
+            <span class="kpi-label">Tactical Alerts</span>
+            <div class="kpi-icon-badge amber"><i data-lucide="bell" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val text-amber" id="an-alerts-generated">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">Collision & BOLO events</span></div>
+        </div>
+
+        <div class="analytics-kpi-card" onclick="openAnalyticsDrilldown('all', 'CCTV Feeds Active')">
+          <div class="kpi-top">
+            <span class="kpi-label">Active Cameras</span>
+            <div class="kpi-icon-badge emerald"><i data-lucide="video" style="width:15px;height:15px;"></i></div>
+          </div>
+          <div class="kpi-val text-emerald" id="an-contributing-cams">--</div>
+          <div class="kpi-footer"><span class="kpi-sub">Reporting feeds / 30 total</span></div>
+        </div>
+      </div>
+
+      <!-- Interactive Charts Visualization Grid -->
+      <div class="analytics-charts-grid">
+        <!-- Chart 1: Time Series -->
+        <div class="analytics-chart-box full-width">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i data-lucide="trending-up" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span>Detection Velocity Over Time</span>
+            </div>
+            <div class="chart-legend-wrap">
+              <span class="legend-pill" style="border-left:3px solid #2563eb;">Vehicles</span>
+              <span class="legend-pill" style="border-left:3px solid #6366f1;">Persons</span>
+              <span class="legend-pill" style="border-left:3px solid #06b6d4;">ANPR Reads</span>
+              <span class="legend-pill" style="border-left:3px solid #dc2626;">Watchlist Hits</span>
+            </div>
+          </div>
+          <div class="chart-canvas-container" style="height:250px;">
+            <canvas id="chart-detections-timeline"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Top Busiest Cameras -->
+        <div class="analytics-chart-box">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i data-lucide="activity" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span>Top Busiest CCTV Nodes</span>
+            </div>
+            <span class="chart-header-sub">By total detections</span>
+          </div>
+          <div class="chart-canvas-container" style="height:230px;">
+            <canvas id="chart-busiest-cameras"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Vehicle Class Distribution -->
+        <div class="analytics-chart-box">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i data-lucide="pie-chart" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span>Object & Vehicle Classification</span>
+            </div>
+            <span class="chart-header-sub">YOLO26 Inference</span>
+          </div>
+          <div class="chart-canvas-container" style="height:230px;">
+            <canvas id="chart-vehicle-types"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 4: Department Distribution -->
+        <div class="analytics-chart-box full-width">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i data-lucide="building-2" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span>Surveillance Volume by Police Department</span>
+            </div>
+            <span class="chart-header-sub">Zonal breakdown</span>
+          </div>
+          <div class="chart-canvas-container" style="height:210px;">
+            <canvas id="chart-department-distribution"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deep Analytics Tables Row: ANPR Intelligence & Operational Health -->
+      <div class="analytics-panels-row">
+        <!-- Pane A: ANPR Intelligence Table -->
+        <div class="analytics-panel-card">
+          <div class="panel-card-header">
+            <div class="panel-title-wrap">
+              <i data-lucide="scan-line" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span class="panel-title">Highest-Confidence ANPR Recognitions</span>
+            </div>
+            <button type="button" class="panel-action-link" onclick="openAnalyticsDrilldown('anpr', 'All ANPR Recognitions')">View All Reads</button>
+          </div>
+          <div class="panel-table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Plate Number</th>
+                  <th>Camera Node</th>
+                  <th>Location</th>
+                  <th>Class</th>
+                  <th>Confidence</th>
+                  <th>Timestamp</th>
+                  <th>Watchlist Status</th>
+                </tr>
+              </thead>
+              <tbody id="anpr-analytics-table-body">
+                <tr><td colspan="7" style="text-align:center;color:var(--graphite-400);padding:24px;">Loading ANPR reads...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pane B: Operational CCTV Grid Telemetry & Audit -->
+        <div class="analytics-panel-card">
+          <div class="panel-card-header">
+            <div class="panel-title-wrap">
+              <i data-lucide="server" style="width:16px;height:16px;color:var(--command-blue)"></i>
+              <span class="panel-title">CCTV Network & Telemetry Audit</span>
+            </div>
+            <span class="status-pill status-pill-online" id="operational-network-status">30 / 30 Feeds Online</span>
+          </div>
+          
+          <div class="operational-telemetry-grid">
+            <div class="telemetry-stat-card">
+              <div class="stat-num" id="op-reporting-cams">--</div>
+              <div class="stat-lbl">Active Reporting Feeds</div>
+            </div>
+            <div class="telemetry-stat-card">
+              <div class="stat-num" id="op-silent-cams">--</div>
+              <div class="stat-lbl">Silent Feeds (0 Events)</div>
+            </div>
+            <div class="telemetry-stat-card">
+              <div class="stat-num text-emerald" id="op-quality-score">100%</div>
+              <div class="stat-lbl">Metadata Quality Audit</div>
+            </div>
+            <div class="telemetry-stat-card">
+              <div class="stat-num" id="op-avg-dwell">--s</div>
+              <div class="stat-lbl">Average Dwell / Track Time</div>
+            </div>
+          </div>
+
+          <!-- Protocol & Metadata Breakdown -->
+          <div class="operational-subsections">
+            <div class="op-sub-card">
+              <div class="op-sub-title"><i data-lucide="network" style="width:13px;height:13px;"></i> Protocols Active</div>
+              <div class="op-sub-content">
+                <span class="protocol-tag">RTSP: 30</span>
+                <span class="protocol-tag">HLS: 30</span>
+                <span class="protocol-tag">WebRTC: 30</span>
+              </div>
+            </div>
+            <div class="op-sub-card">
+              <div class="op-sub-title"><i data-lucide="check-circle-2" style="width:13px;height:13px;color:var(--op-green)"></i> Geospatial & Metadata Verification</div>
+              <div class="op-sub-content" id="op-metadata-audit-notes">
+                <span>GPS Coordinates: Verified 30/30 • Departments Assigned: 30/30</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!--  ANALYTICS EVENT DRILL-DOWN MODAL                                      -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div id="analytics-drilldown-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal('analytics-drilldown-modal')">
+  <div class="modal modal-large">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:8px;background:var(--command-blue-soft);color:var(--command-blue);display:flex;align-items:center;justify-content:center;">
+          <i data-lucide="database" style="width:18px;height:18px;"></i>
+        </div>
+        <div>
+          <h3 id="drilldown-modal-title">Analytics Event Drill-Down</h3>
+          <p id="drilldown-modal-subtitle" style="font-size:11px;color:var(--graphite-500);margin-top:2px;">Showing verified ground-truth records from database</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('analytics-drilldown-modal')">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span id="drilldown-count-label" style="font-size:12px;font-weight:700;color:var(--graphite-700);">0 events found</span>
+        <button type="button" class="analytics-btn-export" onclick="exportAnalyticsReport('csv')" style="padding:4px 10px;font-size:11px;">
+          <i data-lucide="download" style="width:12px;height:12px;"></i> Export Filtered CSV
+        </button>
+      </div>
+      <div class="table-container" style="max-height:460px;overflow-y:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Camera</th>
+              <th>Location</th>
+              <th>Timestamp</th>
+              <th>Class</th>
+              <th>License Plate</th>
+              <th>Confidence</th>
+              <th>Track ID</th>
+              <th>Watchlist Match</th>
+            </tr>
+          </thead>
+          <tbody id="drilldown-table-body">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:var(--graphite-400);">Drishti Intelligence Database • Cryptographically Logged</span>
+      <button class="btn btn-secondary" onclick="closeModal('analytics-drilldown-modal')">Close</button>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════ -->

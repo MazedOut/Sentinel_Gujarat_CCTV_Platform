@@ -1,5 +1,5 @@
 """
-Complete database schema for Sentinel Gujarat.
+Complete database schema for Drishti.
 All SQLAlchemy ORM models in one place.
 """
 from backend.app.models.db.camera import Camera

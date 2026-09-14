@@ -61,5 +61,35 @@ class Alert(Base):
         nullable=False,
     )
 
+    def to_dict(self) -> dict:
+        return {
+            "id": str(self.id),
+            "camera_id": self.camera_id,
+            "registration_number": self.registration_number,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else (self.created_at.isoformat() if self.created_at else None),
+            "location": self.location,
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "vehicle_detection_confidence": self.vehicle_detection_confidence,
+            "plate_detection_confidence": self.plate_detection_confidence,
+            "ocr_confidence": self.ocr_confidence,
+            "overall_confidence": self.overall_confidence if self.overall_confidence is not None else (self.confidence or 0.9),
+            "watchlist_status": self.watchlist_status or self.risk_category or "SURVEILLANCE",
+            "priority": self.priority or self.severity or "MEDIUM",
+            "severity": self.severity or "MEDIUM",
+            "watchlist_source": self.watchlist_source or "GUJARAT_POLICE_AI_SURVEILLANCE",
+            "pts_ms": self.pts_ms,
+            "frame_index": self.frame_index,
+            "bbox_json": self.bbox_json,
+            "plate_bbox_json": self.plate_bbox_json,
+            "evidence_frame_path": self.evidence_frame_path or self.frame_path,
+            "status": self.status or "NEW",
+            "acknowledged_by": self.acknowledged_by,
+            "acknowledged_at": self.acknowledged_at.isoformat() if self.acknowledged_at else None,
+            "notes": self.notes,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
     def __repr__(self):
         return f"<Alert(id={self.id}, plate='{self.registration_number}', severity='{self.severity}', status='{self.status}')>"
+

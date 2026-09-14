@@ -1,5 +1,5 @@
 /**
- * Sentinel Gujarat — Frontend Application Logic
+ * Drishti — Police CCTV Intelligence & Surveillance Frontend Logic
  */
 
 // API_BASE always points to the FastAPI backend (port 8000).
@@ -7,7 +7,7 @@
 // window.location.origin would be :3000, so we explicitly target :8000.
 const API_BASE = `${window.location.protocol}//${window.location.hostname}:8000`;
 let ws = null;
-let token = localStorage.getItem("sentinel_token");
+let token = localStorage.getItem("drishti_token") || localStorage.getItem("sentinel_token");
 let currentUser = null;
 
 // ============================================================
@@ -137,6 +137,7 @@ els.loginForm.addEventListener("submit", async (e) => {
     if (res.ok) {
       const data = await res.json();
       token = data.access_token;
+      localStorage.setItem("drishti_token", token);
       localStorage.setItem("sentinel_token", token);
       
       const meRes = await fetch(`${API_BASE}/auth/me`, {
@@ -161,11 +162,43 @@ els.loginForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ── Jury Quick Role Selector & Password Visibility ────────────────────────
+function selectJuryRole(username, password, btnElement) {
+  const uInput = document.getElementById("login-username");
+  const pInput = document.getElementById("login-password");
+  if (uInput) uInput.value = username;
+  if (pInput) pInput.value = password;
+
+  document.querySelectorAll(".jury-role-btn").forEach(btn => btn.classList.remove("active"));
+  if (btnElement) btnElement.classList.add("active");
+
+  const err = document.getElementById("login-error");
+  if (err) err.classList.add("hidden");
+}
+
+function togglePasswordVisibility() {
+  const pInput = document.getElementById("login-password");
+  const eyeIcon = document.getElementById("login-pwd-eye");
+  if (!pInput) return;
+  if (pInput.type === "password") {
+    pInput.type = "text";
+    if (eyeIcon) eyeIcon.setAttribute("data-lucide", "eye-off");
+  } else {
+    pInput.type = "password";
+    if (eyeIcon) eyeIcon.setAttribute("data-lucide", "eye");
+  }
+  lucide.createIcons();
+}
+
+window.selectJuryRole = selectJuryRole;
+window.togglePasswordVisibility = togglePasswordVisibility;
+
 els.logoutBtn.addEventListener("click", logout);
 
 function logout() {
   token = null;
   currentUser = null;
+  localStorage.removeItem("drishti_token");
   localStorage.removeItem("sentinel_token");
   if (ws) { try { ws.close(); } catch(e) {} ws = null; }
   destroyAllGridPlayers(); // Clean up all grid HLS players on logout
@@ -206,6 +239,10 @@ function switchTab(tabId) {
   if (tabId === "watchlist") loadWatchlist();
   if (tabId === "audit" && currentUser.role === "ADMIN") loadAudit();
   if (tabId === "overview") loadOverview();
+  if (tabId === "analytics") {
+    loadAnalyticsData();
+    populateAnalyticsFilterDropdowns();
+  }
   
   if (tabId === "map") {
     loadMapTab();
@@ -235,7 +272,7 @@ document.getElementById("sync-btn").addEventListener("click", async () => {
     });
     if (res.ok) {
       const data = await res.json();
-      showToast(`Synced ${data.cameras_found} cameras from Sentinel`, "success");
+      showToast(`Synced ${data.cameras_found} cameras from Drishti catalogue`, "success");
       loadCameras();
       loadOverview();
     }
@@ -318,7 +355,7 @@ function connectWebSocket() {
       const isIncident = data.alert.watchlist_status === "ACCIDENT_COLLISION" || data.alert.severity === "CRITICAL";
       if (isIncident) {
         playEmergencyChime();
-        showToast(`🚨 CRITICAL AID: Incident detected at ${data.alert.camera_id}! Gujarat 108 Emergency Medical Protocol Activated`, "error", 12000);
+        showToast(`[CRITICAL AID] Incident detected at ${data.alert.camera_id}! Gujarat 108 Emergency Medical Protocol Activated`, "error", 12000);
         markCameraIncident(data.alert.camera_id, data.alert);
       } else if (data.alert.severity === "HIGH") {
         showToast(`URGENT: ${data.alert.registration_number} detected! (${data.alert.watchlist_status})`, "error", 8000);
@@ -362,6 +399,7 @@ function updateAlertUI() {
 
 async function loadData() {
   loadOverview();
+  loadAlerts();
   // Pre-populate camera grid immediately after login so ALL streams begin connecting
   // before the user navigates to the cameras tab.
   try {
@@ -438,6 +476,26 @@ async function loadOverview() {
       const wl = await wlRes.json();
       document.getElementById("stat-watchlist").textContent = wl.total;
     }
+
+    // Active Alerts count & Overview alerts list
+    await loadAlerts();
+    renderOverviewAlerts();
+    const alertCountEl = document.getElementById("stat-alerts");
+    if (alertCountEl) alertCountEl.textContent = activeAlerts.length;
+
+    // Detections Today count for Overview Tile
+    try {
+      const anRes = await fetch(`${API_BASE}/api/analytics/summary?time_range=today`, {
+        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+      });
+      if (anRes.ok) {
+        const anData = await anRes.json();
+        const detCountEl = document.getElementById("stat-detections");
+        if (detCountEl && anData.kpis) {
+          detCountEl.textContent = anData.kpis.total_detections || 0;
+        }
+      }
+    } catch (e) { /* non-critical */ }
     
   } catch (e) {
     console.error("Failed to load overview data", e);
@@ -903,7 +961,7 @@ function renderInvestigationResult(plate, journey) {
       </div>
       <div>
         <h3 style="font-size:1.1rem;margin-bottom:4px;">No Sightings Found</h3>
-        <p style="color:var(--text-secondary);font-size:0.85rem">Vehicle <span class="plate-chip" style="margin:0 4px">${plate}</span> has not been detected by the Sentinel network.</p>
+        <p style="color:var(--text-secondary);font-size:0.85rem">Vehicle <span class="plate-chip" style="margin:0 4px">${plate}</span> has not been detected by the Drishti surveillance network.</p>
       </div>
     `;
     timeline.innerHTML = '';
@@ -1211,6 +1269,15 @@ function initCameraGridStream(cameraId) {
   const video = document.getElementById(`grid-video-${cameraId}`);
   if (!video) return; // Tile not in DOM
 
+  // Enforce 100% compliant muted autoplay policy across all modern browsers
+  video.muted = true;
+  video.defaultMuted = true;
+  video.volume = 0;
+  video.playsInline = true;
+  video.setAttribute('muted', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('autoplay', '');
+
   const streamUrl = `${API_BASE}/api/hls/${cameraId}/index.m3u8`;
   const overlayEl = document.getElementById(`cam-overlay-${cameraId}`);
   const statusEl  = document.getElementById(`cam-status-${cameraId}`);
@@ -1276,19 +1343,23 @@ function initCameraGridStream(cameraId) {
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
       console.log(`[CCTV] ${cameraId}: stream ready`);
-      video.play().then(() => {
-        setStatus('live');
-        showOverlay(false, null);
-      }).catch(() => {
-        // Autoplay blocked by browser policy — stream is loaded, needs user gesture
-        setStatus('live');
-        showOverlay(true,
-          '<div style="width:38px;height:38px;border-radius:50%;background:rgba(37,99,235,0.2);border:1px solid rgba(37,99,235,0.5);display:flex;align-items:center;justify-content:center;cursor:pointer;" ' +
-          'onclick="var v=this.closest(\'[id^=cam-overlay-]\');var vid=v&&v.previousElementSibling;if(vid&&vid.tagName===\'VIDEO\'){vid.play();}this.parentElement.style.display=\'none\'">' +
-          '<svg width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="5,3 19,12 5,21"/></svg></div>' +
-          '<small style="color:#38bdf8;font-weight:600;font-size:0.7rem;letter-spacing:0.3px;">CLICK TO PLAY</small>'
-        );
-      });
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setStatus('live');
+          showOverlay(false, null);
+        }).catch((err) => {
+          console.warn(`[CCTV] ${cameraId}: Autoplay restricted by browser policy`, err);
+          setStatus('live');
+          showOverlay(true,
+            `<div style="width:38px;height:38px;border-radius:50%;background:rgba(37,99,235,0.25);border:1px solid rgba(56,189,248,0.6);display:flex;align-items:center;justify-content:center;cursor:pointer;" ` +
+            `onclick="var vid=document.getElementById('grid-video-${cameraId}');if(vid){vid.muted=true;vid.play();}this.closest('[id^=cam-overlay-]').style.display='none';">` +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8"><polygon points="5,3 19,12 5,21"/></svg></div>' +
+            '<small style="color:#38bdf8;font-weight:600;font-size:0.7rem;letter-spacing:0.3px;">CLICK TO PLAY</small>'
+          );
+        });
+      }
     });
 
     let _retries = 0;
@@ -1297,8 +1368,22 @@ function initCameraGridStream(cameraId) {
     hls.on(Hls.Events.ERROR, (event, data) => {
       if (!data.fatal) return; // Non-fatal errors are handled internally by hls.js
 
-      // Immediate clean handling for offline upstream cameras (404 Not Found)
-      if (data.response && (data.response.code === 404 || data.response.code === 502)) {
+      // Immediate clean handling ONLY if playlist manifest itself is missing (true offline camera)
+      const isManifestError = data.details === Hls.ErrorDetails.MANIFEST_LOAD_ERROR || 
+                              data.details === Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT ||
+                              data.details === Hls.ErrorDetails.MANIFEST_PARSING_ERROR;
+
+      if (isManifestError && data.response && (data.response.code === 404 || data.response.code === 502)) {
+        _retries++;
+        if (_retries <= 3) {
+          setStatus('reconnecting');
+          clearTimeout(_retryTimer);
+          _retryTimer = setTimeout(() => {
+            cameraPlayers.delete(cameraId);
+            initCameraGridStream(cameraId);
+          }, 1500 * _retries);
+          return;
+        }
         setStatus('offline');
         try { video.pause(); video.removeAttribute('src'); video.load(); } catch(e) {}
         try { hls.destroy(); } catch(e) {}
@@ -1311,6 +1396,12 @@ function initCameraGridStream(cameraId) {
           'onclick="cameraPlayers.delete(\'' + cameraId + '\');initCameraGridStream(\'' + cameraId + '\');">Retry</button>'
         );
         lucide.createIcons();
+        return;
+      }
+
+      // If it's a transient fragment load error, recover seamlessly without showing SOURCE UNAVAILABLE
+      if (data.details === Hls.ErrorDetails.FRAG_LOAD_ERROR || data.details === Hls.ErrorDetails.FRAG_LOAD_TIMEOUT) {
+        hls.startLoad();
         return;
       }
 
@@ -2115,7 +2206,7 @@ function initGoogleMapInstance() {
       const marker = new google.maps.Marker({
         position: { lat: cam.latitude, lng: cam.longitude },
         map: googleMap,
-        title: `${cam.camera_id}: ${cam.location || 'Sentinel Camera'}`,
+        title: `${cam.camera_id}: ${cam.location || 'Drishti Camera'}`,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
           scale: 7,
@@ -2147,7 +2238,7 @@ function initGoogleMapInstance() {
 
   const statusEl = document.getElementById("map-status-text");
   if (statusEl) {
-    statusEl.innerHTML = `Mapped Cameras: ${mappedCount} | Unmapped Coordinates: ${unmappedCount} (Sentinel cameras.json)`;
+    statusEl.innerHTML = `Mapped Cameras: ${mappedCount} | Unmapped Coordinates: ${unmappedCount} (Drishti cameras.json)`;
   }
 }
 
@@ -2159,7 +2250,7 @@ function renderSchematicMap(container, note) {
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:12px;">
         <div>
           <h3 style="margin:0;font-size:1.1rem;display:flex;align-items:center;gap:8px;">
-            <i data-lucide="map" style="color:var(--brand-blue)"></i> Sentinel Gujarat Tactical Schematic
+            <i data-lucide="map" style="color:var(--brand-blue)"></i> Drishti Tactical Schematic
           </h3>
           <p style="margin:4px 0 0;font-size:0.8rem;color:var(--text-secondary);">${note}</p>
         </div>
@@ -2563,7 +2654,7 @@ function renderNetworkPulse() {
   if (!container) return;
 
   if (!allCameras || allCameras.length === 0) {
-    container.innerHTML = '<div style="font-size:11px;color:var(--graphite-500);grid-column:1/-1;padding:8px;">Synchronizing 30 CCTV nodes from Sentinel catalogue...</div>';
+    container.innerHTML = '<div style="font-size:11px;color:var(--graphite-500);grid-column:1/-1;padding:8px;">Synchronizing 30 CCTV nodes from Drishti catalogue...</div>';
     return;
   }
 
@@ -2693,5 +2784,529 @@ function initCommandPalette() {
   }
 }
 
+// Global interaction unblocker: on first user interaction, resume any browser-throttled live streams
+['click', 'keydown', 'touchstart'].forEach(evt => {
+  window.addEventListener(evt, () => {
+    if (typeof cameraPlayers !== 'undefined' && cameraPlayers.size > 0) {
+      cameraPlayers.forEach((entry, cid) => {
+        if (entry.video && entry.video.paused && entry.status === 'live') {
+          entry.video.muted = true;
+          entry.video.play().then(() => {
+            const overlay = document.getElementById(`cam-overlay-${cid}`);
+            if (overlay) overlay.style.display = 'none';
+          }).catch(() => {});
+        }
+      });
+    }
+  }, { passive: true });
+});
+
+// ==========================================================================
+// VIDEO & OPERATIONAL CCTV ANALYTICS ENGINE
+// ==========================================================================
+let analyticsTimeRange = "today";
+let analyticsCameraFilter = "";
+let analyticsDeptFilter = "";
+let analyticsEventTypeFilter = "";
+let analyticsChartInstances = {};
+
+function setAnalyticsTimeRange(range) {
+  analyticsTimeRange = range;
+  const pills = document.querySelectorAll("#analytics-time-pills .time-pill");
+  pills.forEach(p => {
+    if (p.dataset.range === range) {
+      p.classList.add("active");
+    } else {
+      p.classList.remove("active");
+    }
+  });
+  loadAnalyticsData();
+}
+
+function applyAnalyticsFilters() {
+  const camSel = document.getElementById("analytics-filter-camera");
+  const deptSel = document.getElementById("analytics-filter-dept");
+  const typeSel = document.getElementById("analytics-filter-event-type");
+  
+  analyticsCameraFilter = camSel ? camSel.value : "";
+  analyticsDeptFilter = deptSel ? deptSel.value : "";
+  analyticsEventTypeFilter = typeSel ? typeSel.value : "";
+
+  loadAnalyticsData();
+}
+
+async function populateAnalyticsFilterDropdowns() {
+  try {
+    const camSel = document.getElementById("analytics-filter-camera");
+    const deptSel = document.getElementById("analytics-filter-dept");
+    if (!camSel || !deptSel) return;
+
+    if (!allCameras || allCameras.length === 0) {
+      const res = await fetch(`${API_BASE}/cameras`, {
+        headers: token ? { "Authorization": `Bearer ${token}` } : {}
+      });
+      if (res.ok) allCameras = await res.json();
+    }
+
+    if (allCameras && allCameras.length > 0) {
+      const currentCam = camSel.value;
+      let camOpts = '<option value="">All 30 Cameras</option>';
+      const depts = new Set();
+
+      allCameras.forEach(c => {
+        camOpts += `<option value="${c.camera_id}">${c.camera_id.toUpperCase()} — ${c.location || ''}</option>`;
+        if (c.department) depts.add(c.department);
+      });
+      camSel.innerHTML = camOpts;
+      if (currentCam) camSel.value = currentCam;
+
+      const currentDept = deptSel.value;
+      let deptOpts = '<option value="">All Departments</option>';
+      Array.from(depts).sort().forEach(d => {
+        deptOpts += `<option value="${d}">${d}</option>`;
+      });
+      deptSel.innerHTML = deptOpts;
+      if (currentDept) deptSel.value = currentDept;
+    }
+  } catch (err) {
+    console.error("Failed to populate analytics dropdowns:", err);
+  }
+}
+
+async function loadAnalyticsData() {
+  try {
+    const params = new URLSearchParams({
+      time_range: analyticsTimeRange,
+      camera_id: analyticsCameraFilter,
+      department: analyticsDeptFilter,
+      event_type: analyticsEventTypeFilter,
+    });
+
+    const res = await fetch(`${API_BASE}/api/analytics/summary?${params.toString()}`, {
+      headers: token ? { "Authorization": `Bearer ${token}` } : {}
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    renderAnalyticsKPIs(data.kpis);
+    renderAnalyticsCharts(data);
+    renderANPRAnalyticsTable(data.anpr_analytics ? data.anpr_analytics.highest_confidence_reads : []);
+    renderOperationalTelemetry(data.operational_analytics);
+
+    if (window.lucide) window.lucide.createIcons();
+  } catch (err) {
+    console.error("Failed loading analytics data:", err);
+    showToast("Failed loading analytics telemetry", "error");
+  }
+}
+
+function renderAnalyticsKPIs(kpis) {
+  if (!kpis) return;
+  const setVal = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = Number(val || 0).toLocaleString();
+  };
+
+  setVal("an-total-detections", kpis.total_detections);
+  setVal("an-vehicle-detections", kpis.vehicle_detections);
+  setVal("an-person-detections", kpis.person_detections);
+  setVal("an-anpr-reads", kpis.anpr_reads);
+  setVal("an-unique-plates", kpis.unique_plates);
+  setVal("an-watchlist-matches", kpis.watchlist_matches);
+  setVal("an-alerts-generated", kpis.alerts_generated);
+  setVal("an-contributing-cams", `${kpis.contributing_cameras || 0}/30`);
+}
+
+function renderAnalyticsCharts(data) {
+  if (typeof Chart === "undefined") {
+    console.warn("Chart.js not yet loaded");
+    return;
+  }
+
+  const gridColor = "rgba(15, 23, 42, 0.08)";
+  const textColor = "#475569";
+  const fontFamily = "'Inter', sans-serif";
+
+  // 1. Detections Over Time Chart
+  const timelineCanvas = document.getElementById("chart-detections-timeline");
+  if (timelineCanvas) {
+    if (analyticsChartInstances["timeline"]) analyticsChartInstances["timeline"].destroy();
+
+    const ts = data.time_series || { labels: [], vehicles: [], persons: [], anpr: [], watchlist: [] };
+
+    analyticsChartInstances["timeline"] = new Chart(timelineCanvas, {
+      type: "line",
+      data: {
+        labels: ts.labels,
+        datasets: [
+          {
+            label: "Vehicles",
+            data: ts.vehicles,
+            borderColor: "#2563eb",
+            backgroundColor: "rgba(37, 99, 235, 0.08)",
+            borderWidth: 2.2,
+            tension: 0.35,
+            fill: true,
+            pointRadius: ts.labels.length > 20 ? 1 : 3,
+          },
+          {
+            label: "Persons",
+            data: ts.persons,
+            borderColor: "#6366f1",
+            backgroundColor: "transparent",
+            borderWidth: 1.8,
+            borderDash: [4, 4],
+            tension: 0.35,
+            pointRadius: ts.labels.length > 20 ? 1 : 2,
+          },
+          {
+            label: "ANPR Reads",
+            data: ts.anpr,
+            borderColor: "#06b6d4",
+            backgroundColor: "transparent",
+            borderWidth: 1.8,
+            tension: 0.35,
+            pointRadius: ts.labels.length > 20 ? 1 : 2,
+          },
+          {
+            label: "Watchlist Hits",
+            data: ts.watchlist,
+            borderColor: "#dc2626",
+            backgroundColor: "rgba(220, 38, 38, 0.15)",
+            borderWidth: 2,
+            tension: 0.2,
+            pointRadius: 4,
+            pointBackgroundColor: "#dc2626",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: "#0f172a",
+            titleFont: { family: fontFamily, size: 12 },
+            bodyFont: { family: fontFamily, size: 11 },
+            padding: 10,
+            cornerRadius: 8,
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: gridColor },
+            ticks: { color: textColor, font: { family: fontFamily, size: 10.5 }, maxRotation: 0 },
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor },
+            ticks: { color: textColor, font: { family: fontFamily, size: 10.5 }, precision: 0 },
+          },
+        },
+      },
+    });
+  }
+
+  // 2. Busiest Cameras Chart (Horizontal Bar)
+  const busiestCanvas = document.getElementById("chart-busiest-cameras");
+  if (busiestCanvas) {
+    if (analyticsChartInstances["busiest"]) analyticsChartInstances["busiest"].destroy();
+
+    const busy = (data.busiest_cameras || []).slice(0, 7);
+    const labels = busy.map(b => b.camera_id.toUpperCase());
+    const counts = busy.map(b => b.total_detections);
+
+    analyticsChartInstances["busiest"] = new Chart(busiestCanvas, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Detections",
+          data: counts,
+          backgroundColor: "#0284c7",
+          borderRadius: 5,
+        }],
+      },
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: function(ctx) {
+                const item = busy[ctx.dataIndex];
+                return `${item.name}\nANPR: ${item.anpr_reads} | Watchlist: ${item.watchlist_matches}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: { color: gridColor },
+            ticks: { color: textColor, font: { family: fontFamily, size: 10 } },
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: textColor, font: { family: fontFamily, size: 10.5, weight: "bold" } },
+          },
+        },
+      },
+    });
+  }
+
+  // 3. Vehicle & Object Classification (Doughnut)
+  const typesCanvas = document.getElementById("chart-vehicle-types");
+  if (typesCanvas) {
+    if (analyticsChartInstances["types"]) analyticsChartInstances["types"].destroy();
+
+    const vDist = data.vehicle_distribution || {};
+    const labels = Object.keys(vDist).map(k => k.toUpperCase());
+    const values = Object.values(vDist);
+
+    const typeColors = {
+      "CAR": "#2563eb",
+      "MOTORCYCLE": "#06b6d4",
+      "BUS": "#f59e0b",
+      "TRUCK": "#8b5cf6",
+      "PERSON": "#10b981",
+      "CRASH": "#ef4444",
+      "COLLISION": "#dc2626",
+      "ACCIDENT": "#f87171",
+      "INCIDENT": "#f97316",
+      "UNKNOWN": "#94a3b8"
+    };
+
+    const bgColors = labels.map(l => typeColors[l] || "#3b82f6");
+
+    analyticsChartInstances["types"] = new Chart(typesCanvas, {
+      type: "doughnut",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: bgColors,
+          borderWidth: 2,
+          borderColor: "#ffffff",
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "right",
+            labels: { font: { family: fontFamily, size: 10.5 }, color: textColor, boxWidth: 12 },
+          },
+        },
+        cutout: "68%",
+      },
+    });
+  }
+
+  // 4. Department Distribution (Bar)
+  const deptCanvas = document.getElementById("chart-department-distribution");
+  if (deptCanvas) {
+    if (analyticsChartInstances["dept"]) analyticsChartInstances["dept"].destroy();
+
+    const dDist = data.department_distribution || {};
+    const labels = Object.keys(dDist).map(d => d.replace("Gujarat Police — ", ""));
+    const values = Object.values(dDist);
+
+    analyticsChartInstances["dept"] = new Chart(deptCanvas, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Events",
+          data: values,
+          backgroundColor: "rgba(37, 99, 235, 0.8)",
+          borderRadius: 6,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: textColor, font: { family: fontFamily, size: 9.5 } },
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor },
+            ticks: { color: textColor, font: { family: fontFamily, size: 10 } },
+          },
+        },
+      },
+    });
+  }
+}
+
+function renderANPRAnalyticsTable(reads) {
+  const tbody = document.getElementById("anpr-analytics-table-body");
+  if (!tbody) return;
+
+  if (!reads || reads.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--graphite-400);padding:24px;">No plate recognitions recorded for selected filter</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = reads.map(r => {
+    const isW = r.watchlist_matched;
+    const wStatusBadge = isW 
+      ? `<span class="status-pill status-pill-offline" style="background:rgba(220,38,38,0.1);color:#dc2626;border-color:rgba(220,38,38,0.3);"><i data-lucide="alert-triangle" style="width:11px;height:11px;display:inline;"></i> ${r.watchlist_status || 'MATCH'}</span>`
+      : `<span style="color:var(--graphite-400);font-size:11px;">Standard Flow</span>`;
+    
+    const confPct = Math.round((r.confidence || 0.9) * 100);
+    const confPill = `<span class="confidence-tag ${confPct >= 90 ? 'conf-high' : 'conf-med'}">${confPct}%</span>`;
+
+    const timeStr = r.event_time ? new Date(r.event_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--';
+
+    return `
+      <tr>
+        <td style="font-family:var(--font-mono);font-weight:700;letter-spacing:1px;color:#0f172a;">${r.plate}</td>
+        <td><span class="badge-cam">${r.camera_id.toUpperCase()}</span></td>
+        <td style="font-size:11.5px;color:var(--graphite-700);">${r.location || r.camera_id}</td>
+        <td style="text-transform:capitalize;">${r.vehicle_class || 'Vehicle'}</td>
+        <td>${confPill}</td>
+        <td style="font-family:var(--font-mono);font-size:11px;color:var(--graphite-500);">${timeStr}</td>
+        <td>${wStatusBadge}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function renderOperationalTelemetry(op) {
+  if (!op) return;
+
+  const setT = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+
+  setT("op-reporting-cams", `${op.reporting_cameras} Feeds`);
+  setT("op-silent-cams", `${op.silent_cameras_count} Feeds`);
+  setT("op-quality-score", `${op.metadata_quality.quality_score_percent}%`);
+  setT("op-avg-dwell", `${op.tracking_analytics ? op.tracking_analytics.average_dwell_time_seconds : '4.2'}s`);
+
+  const netPill = document.getElementById("operational-network-status");
+  if (netPill) {
+    netPill.textContent = `${op.reporting_cameras} Reporting • ${op.total_cameras} Provisioned`;
+  }
+}
+
+async function openAnalyticsDrilldown(metricType, title) {
+  try {
+    const modal = document.getElementById("analytics-drilldown-modal");
+    if (!modal) return;
+
+    document.getElementById("drilldown-modal-title").textContent = title || "Analytics Event Drill-Down";
+    document.getElementById("drilldown-count-label").textContent = "Querying database...";
+    
+    const tbody = document.getElementById("drilldown-table-body");
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--graphite-400);">Loading records from database...</td></tr>';
+    
+    modal.classList.remove("hidden");
+
+    let eventTypeParam = "";
+    let watchlistOnly = false;
+    if (metricType === "vehicle") eventTypeParam = "vehicle";
+    else if (metricType === "person") eventTypeParam = "person";
+    else if (metricType === "anpr") eventTypeParam = "anpr";
+    else if (metricType === "watchlist") watchlistOnly = true;
+    else if (metricType === "crash") eventTypeParam = "crash";
+
+    const params = new URLSearchParams({
+      time_range: analyticsTimeRange,
+      camera_id: analyticsCameraFilter,
+      department: analyticsDeptFilter,
+      event_type: eventTypeParam,
+      watchlist_only: watchlistOnly ? "true" : "false",
+      limit: "100",
+    });
+
+    const res = await fetch(`${API_BASE}/api/analytics/events?${params.toString()}`, {
+      headers: token ? { "Authorization": `Bearer ${token}` } : {}
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    document.getElementById("drilldown-count-label").textContent = `Showing ${data.events.length} of ${data.total} matching database events`;
+
+    if (!data.events || data.events.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--graphite-400);">No records found matching this filter criteria</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.events.map(ev => {
+      const isW = ev.watchlist_matched;
+      const wBadge = isW 
+        ? `<span class="role-pill" style="background:rgba(220,38,38,0.12);color:#dc2626;border:1px solid rgba(220,38,38,0.3);font-size:9px;">MATCH: ${ev.watchlist_status || 'FLAGGED'}</span>`
+        : `<span style="color:var(--graphite-400);font-size:10.5px;">NO</span>`;
+      
+      const confPct = Math.round(((ev.overall_confidence || ev.vehicle_confidence || 0.9)) * 100);
+      const confTag = `<span class="confidence-tag ${confPct >= 90 ? 'conf-high' : 'conf-med'}">${confPct}%</span>`;
+
+      const timeFormatted = ev.event_time ? new Date(ev.event_time).toLocaleString([], {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+      }) : '--';
+
+      return `
+        <tr>
+          <td style="font-family:var(--font-mono);font-size:11px;color:var(--graphite-500);">${ev.id}</td>
+          <td><span class="badge-cam">${ev.camera_id.toUpperCase()}</span></td>
+          <td style="font-size:11.5px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${ev.location}">${ev.location || ev.camera_id}</td>
+          <td style="font-family:var(--font-mono);font-size:11px;color:var(--graphite-700);">${timeFormatted}</td>
+          <td style="text-transform:capitalize;font-weight:600;">${ev.vehicle_class || 'Vehicle'}</td>
+          <td style="font-family:var(--font-mono);font-weight:700;color:#0f172a;">${ev.normalised_plate || '<span style="color:var(--graphite-300)">--</span>'}</td>
+          <td>${confTag}</td>
+          <td style="font-family:var(--font-mono);font-size:11px;">#${ev.track_id || '--'}</td>
+          <td>${wBadge}</td>
+        </tr>
+      `;
+    }).join("");
+
+    if (window.lucide) window.lucide.createIcons();
+  } catch (err) {
+    console.error("Drill-down error:", err);
+    showToast("Failed loading drill-down events", "error");
+  }
+}
+
+function exportAnalyticsReport(format = "csv") {
+  const params = new URLSearchParams({
+    format: format,
+    time_range: analyticsTimeRange,
+    camera_id: analyticsCameraFilter,
+    department: analyticsDeptFilter,
+  });
+
+  const url = `${API_BASE}/api/analytics/report/export?${params.toString()}`;
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `drishti_analytics_${analyticsTimeRange}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast("Downloading official CCTV analytics report...", "success");
+}
+
+window.setAnalyticsTimeRange = setAnalyticsTimeRange;
+window.applyAnalyticsFilters = applyAnalyticsFilters;
+window.loadAnalyticsData = loadAnalyticsData;
+window.openAnalyticsDrilldown = openAnalyticsDrilldown;
+window.exportAnalyticsReport = exportAnalyticsReport;
+
 // BOOT
 init();
+
